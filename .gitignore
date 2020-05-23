@@ -26,3 +26,10 @@ motif_l/extern.h
 perl_api/extern.h
 tcl_api/extern.h
 vi/extern.h
+
+# my build
+build.me/*
+!build.me/build.sh
+
+# other build artifeacts
+docs/vi.man/vi.0
