@@ -322,56 +322,6 @@ if test "$vi_cv_gtk" = "yes"; then
 #	fi
 fi
 
-dnl If the user wants a Motif IPC front-end for nvi, build it.
-AC_SUBST(MOTIFLIBS)
-AC_MSG_CHECKING(if --enable-motif option specified)
-AC_ARG_ENABLE(motif,
-	[  --enable-motif          Build a Motif front-end for vi.],
-	[vi_cv_motif=$enableval], [vi_cv_motif="no"])
-AC_MSG_RESULT($vi_cv_motif)
-if test "$vi_cv_motif" = "yes"; then
-	vi_programs="$vi_programs vi-motif"
-	vi_ipc=vi-ipc
-
-	dnl XXX
-	dnl BSDI's Motif libraries aren't shared.
-
-	case "$host_os" in
-	bsdi*)	CC=cc;;
-	esac
-
-	dnl XXX
-	dnl The Xinside Motif distribution requires -lSM, -lICE and -lXext.
-	dnl -lXext is generally available, the others aren't.
-	dnl
-	dnl XXX
-	dnl Color icons require -lXpm, which may or may not be available,
-	dnl depending on the version of X11.
-
-	MOTIFLIBS="-lXm -lXt"
-	AC_CHECK_LIB(SM, main,
-	    [vi_cv_smlib="yes"], [vi_cv_smlib="no"], "$XLIBS")
-	if test "$vi_cv_smlib" = "yes"; then
-		MOTIFLIBS="$MOTIFLIBS -lSM"
-	fi
-	AC_CHECK_LIB(ICE, main,
-	    [vi_cv_icelib="yes"], [vi_cv_icelib="no"], "$XLIBS")
-	if test "$vi_cv_icelib" = "yes"; then
-		MOTIFLIBS="$MOTIFLIBS -lICE"
-	fi
-	AC_CHECK_LIB(Xext, main,
-	    [vi_cv_xextlib="yes"], [vi_cv_xextlib="no"], "$XLIBS")
-	if test "$vi_cv_xextlib" = "yes"; then
-		MOTIFLIBS="$MOTIFLIBS -lXext"
-	fi
-	AC_CHECK_LIB(Xpm, main,
-	    [vi_cv_xpmlib="yes"], [vi_cv_xpmlib="no"], "$XLIBS")
-	if test "$vi_cv_xpmlib" = "yes"; then
-		MOTIFLIBS="$MOTIFLIBS -lXpm"
-	fi
-	MOTIFLIBS="$MOTIFLIBS $XLIBS -lm $LIBS"
-fi
-
 AC_SUBST(IPCOBJS)
 dnl Check for threads
 AC_MSG_CHECKING(if --enable-threads option specified)

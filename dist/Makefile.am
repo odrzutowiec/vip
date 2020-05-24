@@ -215,7 +215,7 @@ libvi_la_DEPENDENCIES = @LTLIBOBJS@
 libvi_la_LIBADD = @LTLIBOBJS@
 
 bin_PROGRAMS = @vi_programs@ @vi_ipc@
-EXTRA_PROGRAMS = vi vi-ipc vi-motif vi-gtk
+EXTRA_PROGRAMS = vi vi-ipc vi-gtk
 
 vi_SOURCES = \
 	$(visrcdir)/cl/cl.h \
@@ -255,29 +255,6 @@ vi_gtk_SOURCES = \
 	$(visrcdir)/gtk/gtkviwindow.c
 vi_gtk_LDADD = @GTKLIBS@ @LIBOBJS@
 vi_gtk_CFLAGS = @GTKINCS@ @XINCS@
-
-vi_motif_SOURCES = \
-	$(visrcdir)/ipc/ip_run.c \
-	$(visrcdir)/ipc/ip_send.c \
-	$(visrcdir)/ipc/ip_trans.c \
-	$(visrcdir)/ipc/ipc_cmd.c \
-	$(visrcdir)/ipc/ipc_method.c \
-	$(visrcdir)/motif/m_main.c \
-	$(visrcdir)/motif/m_cde.c \
-	$(visrcdir)/common/trace.c \
-	$(visrcdir)/motif_l/m_copypaste.c \
-	$(visrcdir)/motif_l/m_func.c \
-	$(visrcdir)/motif_l/m_menu.c \
-	$(visrcdir)/motif_l/m_options.c \
-	$(visrcdir)/motif_l/m_prompt.c \
-	$(visrcdir)/motif_l/m_ruler.c \
-	$(visrcdir)/motif_l/m_search.c \
-	$(visrcdir)/motif_l/m_tags.c \
-	$(visrcdir)/motif_l/m_util.c \
-	$(visrcdir)/motif_l/m_vi.c \
-	$(visrcdir)/motif_l/xtabbed.c
-vi_motif_LDADD = @MOTIFLIBS@ @LIBOBJS@
-vi_motif_CFLAGS = @XINCS@
 
 VI=-DVI=\"$(bindir)/`echo vi-ipc | sed '$(transform)'`\"
 CFLAGS=	$(OPTFLAG)
