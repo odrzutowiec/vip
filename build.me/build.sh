@@ -5,3 +5,5 @@ cd ../dist;
 cd -;
 ../dist/configure --enable-shared=no --enable-static=no --enable-widechar --enable-dynamic-loading --enable-threads
 make
+sudo rm -rf /usr/local/bin/vip
+sudo cp vi /usr/local/bin/vip
