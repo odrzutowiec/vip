@@ -102,7 +102,6 @@ libvi_la_SOURCES = \
 	$(visrcdir)/ex/ex_stop.c \
 	$(visrcdir)/ex/ex_subst.c \
 	$(visrcdir)/ex/ex_tag.c \
-	$(visrcdir)/ex/ex_tcl.c \
 	$(visrcdir)/ex/ex_txt.c \
 	$(visrcdir)/ex/ex_undo.c \
 	$(visrcdir)/ex/ex_usage.c \
@@ -208,8 +207,7 @@ EXTRA_libvi_la_SOURCES = \
 	$(visrcdir)/clib/vsnprintf.c \
 	$(visrcdir)/common/pthread.c \
 	$(visrcdir)/common/vi_auto.c \
-	$(visrcdir)/common/vi_rec.c \
-	$(visrcdir)/tcl_api/tcl.c
+	$(visrcdir)/common/vi_rec.c
 # Is this the way to do it ?
 libvi_la_DEPENDENCIES = @LTLIBOBJS@
 libvi_la_LIBADD = @LTLIBOBJS@
@@ -350,12 +348,6 @@ install_common:
 	@(cd $(visrcdir)/catalog && \
 	    $(cp) $(cat) $(DESTDIR)$(datadir)/vi/catalog && \
 	    cd $(DESTDIR)$(datadir)/vi/catalog && $(chmod) $(fmode) *)
-	@echo "Installing Tcl scripts: $(datadir)/vi/tcl ..."
-	@$(mkdir) $(DESTDIR)$(datadir)/vi/tcl && \
-	    $(chmod) $(dmode) $(DESTDIR)$(datadir)/vi/tcl
-	@(cd $(visrcdir)/tcl_scripts && \
-	    $(cp) *.tcl $(DESTDIR)$(datadir)/vi/tcl && \
-	    cd $(DESTDIR)$(datadir)/vi/tcl && $(chmod) $(fmode) *.tcl)
 	@echo "Installing recover script: $(datadir)/vi/recover ..."
 	@($(cp) recover $(DESTDIR)$(datadir)/vi/recover && \
 	    $(chmod) $(emode) $(DESTDIR)$(datadir)/vi/recover)

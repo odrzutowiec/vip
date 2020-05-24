@@ -360,12 +360,6 @@ EXCMDLIST const cmds[] = {
 	    "!",
 	    "tagt[op][!]",
 	    "discard all tags"},
-/* C_TCLCMD */
-	{L("tcl"),		ex_tcl,		E_ADDR2_ALL|E_ADDR_ZERO|
-					    E_ADDR_ZERODEF|E_SECURE,
-	    "s",
-	    "tc[l] cmd",
-	    "run the tcl interpreter with the command"},
 /* C_UNDO */
 	{L("undo"),	ex_undo,	E_AUTOPRINT,
 	    "",

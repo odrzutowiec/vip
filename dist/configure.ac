@@ -345,28 +345,6 @@ else
 	IPCOBJS="nothread.o $IPCOBJS"
 fi
 
-dnl If the user wants a Tk/Tcl interpreter in nvi, load it.  Make sure that
-dnl we can find a Tk/Tcl library.
-AC_MSG_CHECKING(if --enable-tclinterp option specified)
-AC_ARG_ENABLE(tclinterp,
-	[  --enable-tclinterp      Include a Tk/Tcl interpreter in vi.],
-	[vi_cv_tclinterp=$enableval], [vi_cv_tclinterp="no"])
-AC_MSG_RESULT($vi_cv_tclinterp)
-if test "$vi_cv_tclinterp" = "yes"; then
-	AC_MSG_CHECKING([for tclConfig.sh])
-	AC_CACHE_VAL(vi_cv_tclconfig, [
-		vi_cv_tclconfig=`$srcdir/findconfig`])
-	AC_MSG_RESULT($vi_cv_tclconfig)
-	if test "x$vi_cv_tclconfig" = x; then
-		AC_MSG_ERROR([No Tcl library found;])
-	fi
-	. $vi_cv_tclconfig
-	LIBOBJS="tcl.o $LIBOBJS"
-	LIBS="$TCL_LIB_SPEC $TCL_LIBS $LIBS"
-	AC_DEFINE(HAVE_TCL_INTERP, 1,
-			[Define if you want to compile in the Tcl interpreter.])
-fi
-
 dnl check for curses
 AC_SUBST(CURSLIBS)
 AC_SUBST(CURSCPPFLAGS)

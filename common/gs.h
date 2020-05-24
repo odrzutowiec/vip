@@ -59,11 +59,7 @@ struct _gs {
 	CIRCLEQ_HEAD(_dqh, _win) dq;	/* Displayed windows. */
 	CIRCLEQ_HEAD(_hqh, _scr) hq;	/* Hidden screens. */
 
-	void	*tcl_interp;		/* Tcl_Interp *: Tcl interpreter. */
-
 	void	*cl_private;		/* Curses support private area. */
-	void	*tk_private;		/* Tk/Tcl support private area. */
-
 					/* File references. */
 	CIRCLEQ_HEAD(_frefh, _fref) frefq;
  					/* File structures. */

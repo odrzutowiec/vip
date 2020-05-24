@@ -21,7 +21,6 @@ gtk/extern.h
 ip/extern.h
 ipc/extern.h
 ipc/ipc_gen.c
-tcl_api/extern.h
 vi/extern.h
 
 # my build
