@@ -28,7 +28,6 @@ static const char sccsid[] = "$Id: cl_main.c,v 10.54 2001/07/29 19:07:27 skimo E
 #include <unistd.h>
 
 #include "../common/common.h"
-#include "../ip/extern.h"
 #include "cl.h"
 #include "pathnames.h"
 

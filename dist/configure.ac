@@ -162,10 +162,6 @@ if test "$vi_cv_path_sendmail" = no; then
 	AC_MSG_WARN([    users will not be told of saved files.])
 fi
 
-dnl Check for the perl5/perl path.
-AC_SUBST(vi_cv_path_perl)
-AC_PATH_PROGS(vi_cv_path_perl, perl5 perl, no)
-
 dnl Check for the "preserve" path.
 dnl Historically, nvi has used /var/tmp/vi.recover.  The Linux filesystem
 dnl standard (FSSTND) uses /var/preserve; we add the vi.recover directory
@@ -397,64 +393,6 @@ if test "$vi_cv_threads" = "yes"; then
 	AC_DEFINE(HAVE_PTHREAD, 1, [Define if using pthread.])
 else
 	IPCOBJS="nothread.o $IPCOBJS"
-fi
-
-dnl If the user wants a Perl interpreter in nvi, load it.
-AC_SUBST(shrpenv)
-AC_SUBST(perlldflags)
-AC_SUBST(perllibs)
-AC_SUBST(vi_cv_perllib)
-AC_MSG_CHECKING(if --enable-perlinterp option specified)
-AC_ARG_ENABLE(perlinterp,
-	[  --enable-perlinterp     Include a Perl interpreter in vi.],
-	[vi_cv_perlinterp=$enableval], [vi_cv_perlinterp="no"])
-AC_MSG_RESULT($vi_cv_perlinterp)
-if test "$vi_cv_perlinterp" = "yes"; then
-	if test "$vi_cv_path_perl" = no; then
-		AC_MSG_ERROR([No perl5 utility found.])
-	fi
-	$vi_cv_path_perl -e 'require 5.004' || {
-		AC_MSG_ERROR([perl5 must be version 5.004 or later.])
-	}
-	if test "$vi_cv_threads" = "yes"; then
-		useithreads=`$vi_cv_path_perl -MConfig -e 'print $Config{useithreads}'`
-		if test "X$useithreads" != "Xdefine"; then
-			AC_MSG_ERROR([vi threading only compatible with perl's ithreads.])
-		fi
-	fi
-
-	eval `$vi_cv_path_perl -V:shrpenv`
-	vi_cv_perllib=`$vi_cv_path_perl -MConfig -e 'print $Config{privlib}'`
-	perlcppflags=`$vi_cv_path_perl -Mlib=$srcdir -MExtUtils::Embed \
-		-e 'ccflags;perl_inc'`
-	if test "X$perlcppflags" != "X"; then
-		CPPFLAGS="$perlcppflags $CPPFLAGS"
-	fi
-	perllibs=`cd $srcdir;$vi_cv_path_perl -MExtUtils::Embed \
-		-e 'ldopts'`
-	perlldflags=`cd $srcdir;$vi_cv_path_perl -MExtUtils::Embed \
-		-e 'ccdlflags'`
-	LIBOBJS="perl.o perlxsi.o perlsfio.o $LIBOBJS"
-	AC_DEFINE(HAVE_PERL_INTERP, 1,
-			[Define if you want to compile in the Perl interpreter.])
-	AC_CACHE_CHECK([whether we need to use perl's setenv],
-		vi_cv_perl_setenv, [
-		AC_TRY_RUN([
-#include <EXTERN.h>
-#include <perl.h>
-#include <XSUB.h>
-int main(){
-#if defined(USE_ENVIRON_ARRAY) && !defined(PERL_USE_SAFE_PUTENV)
-exit(0);
-#else
-exit(1);
-#endif
-}
-		], [vi_cv_perl_setenv=yes], [vi_cv_perl_setenv=no])])
-	if test "$vi_cv_perl_setenv" = yes; then
-		AC_DEFINE(USE_PERL_SETENV, 1,
-				[Define when perl's setenv should be used.])
-	fi
 fi
 
 dnl If the user wants a Tk/Tcl interpreter in nvi, load it.  Make sure that

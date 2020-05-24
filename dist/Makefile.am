@@ -88,7 +88,6 @@ libvi_la_SOURCES = \
 	$(visrcdir)/ex/ex_mkexrc.c \
 	$(visrcdir)/ex/ex_move.c \
 	$(visrcdir)/ex/ex_open.c \
-	$(visrcdir)/ex/ex_perl.c \
 	$(visrcdir)/ex/ex_preserve.c \
 	$(visrcdir)/ex/ex_print.c \
 	$(visrcdir)/ex/ex_put.c \
@@ -210,8 +209,6 @@ EXTRA_libvi_la_SOURCES = \
 	$(visrcdir)/common/pthread.c \
 	$(visrcdir)/common/vi_auto.c \
 	$(visrcdir)/common/vi_rec.c \
-	$(visrcdir)/perl_api/perl.xs \
-	$(visrcdir)/perl_api/perlsfio.c \
 	$(visrcdir)/tcl_api/tcl.c
 # Is this the way to do it ?
 libvi_la_DEPENDENCIES = @LTLIBOBJS@
@@ -229,9 +226,9 @@ vi_SOURCES = \
 	$(visrcdir)/cl/cl_screen.c \
 	$(visrcdir)/cl/cl_term.c \
 	$(visrcdir)/common/nothread.c
-vi_LDADD = libvi.la @perllibs@ @CURSLIBS@
-vi_CPPFLAGS = $(AM_CPPFLAGS) @CURSCPPFLAGS@ @perlldflags@
-vi_LDFLAGS = @CURSLDFLAGS@ @perlldflags@
+vi_LDADD = libvi.la @CURSLIBS@
+vi_CPPFLAGS = $(AM_CPPFLAGS) @CURSCPPFLAGS@
+vi_LDFLAGS = @CURSLDFLAGS@
 
 vi_ipc_SOURCES = \
 	$(visrcdir)/ip/ip_funcs.c \
@@ -241,8 +238,8 @@ vi_ipc_SOURCES = \
 	$(visrcdir)/ipc/ip_send.c \
 	$(visrcdir)/ipc/ip.h \
 	$(visrcdir)/ip/ip_term.c 
-vi_ipc_LDADD = libvi.la @perllibs@ @IPCOBJS@
-vi_ipc_LDFLAGS = @perlldflags@
+vi_ipc_LDADD = libvi.la @IPCOBJS@
+vi_ipc_LDFLAGS =
 vi_ipc_DEPENDENCIES = @IPCOBJS@
 
 vi_gtk_SOURCES = \
@@ -290,21 +287,7 @@ AM_CPPFLAGS=	 -D__DBINTERFACE_PRIVATE -I$(visrcdir)/db.1.85/include \
 else
 AM_CPPFLAGS=	 -D__REGEX_PRIVATE -I. -I$(visrcdir)/include $(VI)
 endif
-PERL=	@vi_cv_path_perl@
-PERLLIB=@vi_cv_perllib@
 SHRPENV=@shrpenv@
-
-perl.c: $(visrcdir)/perl_api/perl.xs $(visrcdir)/perl_api/typemap
-	echo "#define _PATH_PERLSCRIPTS \"$(datadir)/vi/perl\"" > $@
-	$(PERL) -e 'unless ($$] >= 5.005) {' \
-	       	-e   'for (qw(incgv sv_undef errgv na)) {' \
-		-e     'print "#define PL_$$_ $$_\n" }} ' >> $@
-	$(PERL) $(PERLLIB)/ExtUtils/xsubpp -typemap \
-	    $(PERLLIB)/ExtUtils/typemap $(visrcdir)/perl_api/perl.xs >> $@
-	($(PERL) -ne 'print "sub $$1 {\$$curscr->$$1(\@_)}\n"' \
-	          -e   'if /newXS\("VI::([^\":]*)"/;' $@ ; echo "1;") > VI.pm
-perlxsi.c:
-	perl -MExtUtils::Embed -e xsinit -- -std VI
 
 chmod=	@vi_cv_path_chmod@
 cp=	@vi_cv_path_cp@
@@ -390,15 +373,6 @@ install_common:
 	@(cd $(visrcdir)/catalog && \
 	    $(cp) $(cat) $(DESTDIR)$(datadir)/vi/catalog && \
 	    cd $(DESTDIR)$(datadir)/vi/catalog && $(chmod) $(fmode) *)
-	@echo "Installing Perl scripts: $(datadir)/vi/perl ..."
-	@$(mkdir) $(DESTDIR)$(datadir)/vi/perl && \
-	    $(chmod) $(dmode) $(DESTDIR)$(datadir)/vi/perl
-	@[ ! -f VI.pm ] || \
-	    ($(cp) VI.pm $(DESTDIR)$(datadir)/vi/perl && \
-	    (cd $(DESTDIR)$(datadir)/vi/perl && $(chmod) $(fmode) VI.pm))
-	@(cd $(visrcdir)/perl_scripts && \
-	    $(cp) *.pl $(DESTDIR)$(datadir)/vi/perl && \
-	    cd $(DESTDIR)$(datadir)/vi/perl && $(chmod) $(fmode) *.pl)
 	@echo "Installing Tcl scripts: $(datadir)/vi/tcl ..."
 	@$(mkdir) $(DESTDIR)$(datadir)/vi/tcl && \
 	    $(chmod) $(dmode) $(DESTDIR)$(datadir)/vi/tcl

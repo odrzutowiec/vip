@@ -27,7 +27,6 @@ static const char sccsid[] = "$Id: screen.c,v 10.22 2001/06/25 15:19:12 skimo Ex
 
 #include "common.h"
 #include "../vi/vi.h"
-#include "../perl_api/extern.h"
 
 /*
  * screen_init --
@@ -153,10 +152,6 @@ screen_end(SCR *sp)
 	F_CLR(sp, SC_SCR_EX | SC_SCR_VI);
 
 	rval = 0;
-#ifdef HAVE_PERL_INTERP
-	if (perl_screen_end(sp))		/* End perl. */
-		rval = 1;
-#endif
 	if (v_screen_end(sp))			/* End vi. */
 		rval = 1;
 	if (ex_screen_end(sp))			/* End ex. */

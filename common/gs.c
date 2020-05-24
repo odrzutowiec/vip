@@ -19,7 +19,6 @@
 #include <unistd.h>
 
 #include "../common/common.h"
-#include "../perl_api/extern.h"
 
 static void	   perr __P((char *, char *));
 
@@ -149,10 +148,6 @@ gs_end(GS *gp)
 		(void)win_end(wp);
 	while ((sp = gp->hq.cqh_first) != (void *)&gp->hq)
 		(void)screen_end(sp);
-
-#ifdef HAVE_PERL_INTERP
-	perl_end(gp);
-#endif
 
 #if defined(DEBUG) || defined(PURIFY) || defined(LIBRARY)
 	{ FREF *frp;

@@ -60,16 +60,6 @@ for i in cl common ex gtk ip ipc motif motif_l tcl_api vi; do
 	chmod 444 $f
 done
 
-# Build the automatically generated function prototype files.
-for i in perl_api ; do
-	f=../$i/extern.h
-	rm -f $f
-	echo "Building $f"
-	(echo "$msg" && \
-	    sed -n "s/^ \* PUBLIC: \(.*\)/\1/p" ../$i/*.c ../$i/*.xs) > $f
-	chmod 444 $f
-done
-
 # Build tags files.
 echo "Building tags files"
 f=tags
@@ -77,7 +67,7 @@ rm -f $f
 if test $USER = 'bostic'; then ctagsopt = '-d'; fi
 ctags $ctagsopt -w \
 	../cl/*.[ch] ../common/*.[ch] ../ex/*.[ch] ../gtk/*.[ch] ../ip/*.[ch] \
-	../ipc/*.[ch] ../motif/*.[ch] ../motif_l/*.[ch] ../perl_api/*.[ch] \
+	../ipc/*.[ch] ../motif/*.[ch] ../motif_l/*.[ch] \
 	../tcl_api/*.[ch] ../vi/*.[ch]
 chmod 444 $f
 

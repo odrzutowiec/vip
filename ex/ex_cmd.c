@@ -249,18 +249,6 @@ EXCMDLIST const cmds[] = {
 	    "ca1",
 	    "[line [,line]] p[rint] [count] [#l]",
 	    "display lines"},
-/* C_PERLCMD */
-	{L("perl"),	ex_perl,	E_ADDR2_ALL|E_ADDR_ZERO|
-					    E_ADDR_ZERODEF|E_SECURE,
-	    "s",
-	    "pe[rl] cmd",
-	    "run the perl interpreter with the command"},
-/* C_PERLDOCMD */
-	{L("perldo"),	ex_perl,	E_ADDR2|E_ADDR_ZERO|
-					    E_ADDR_ZERODEF|E_SECURE,
-	    "s",
-	    "perld[o] cmd",
-	    "run the perl interpreter with the command, on each line"},
 /* C_PRESERVE */
 	{L("preserve"),	ex_preserve,	0,
 	    "",

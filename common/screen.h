@@ -37,8 +37,6 @@ struct _win {
 
 	SCR	*ccl_sp;		/* Colon command-line screen. */
 
-	void	*perl_private;		/* Perl interpreter. */
-
 	void	*ip_private;		/* IP support private area. */
 
 	void	*th_private;		/* Threading support private area. */
@@ -155,7 +153,6 @@ struct _scr {
 
 	void	*ex_private;		/* Ex private area. */
 	void	*vi_private;		/* Vi private area. */
-	void	*perl_private;		/* Perl private area. */
 	void	*cl_private;		/* Curses private area. */
 
 	CONV	conv;

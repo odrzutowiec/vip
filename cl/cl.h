@@ -106,11 +106,5 @@ typedef enum { INP_OK=0, INP_EOF, INP_ERR, INP_INTR, INP_TIMEOUT } input_t;
 
 #include "extern.h"
 
-#ifdef USE_PERL_SETENV
-#include "../perl_api/extern.h"
-#define cl_setenv(sp,name,val)	perl_setenv(sp,name,val)
-#define cl_unsetenv(sp,name)	perl_setenv(sp,name,NULL)
-#else
 #define cl_setenv(sp,name,val)	setenv(name,val,1)
 #define cl_unsetenv(sp,name)	unsetenv(name)
-#endif
