@@ -213,7 +213,7 @@ libvi_la_DEPENDENCIES = @LTLIBOBJS@
 libvi_la_LIBADD = @LTLIBOBJS@
 
 bin_PROGRAMS = @vi_programs@ @vi_ipc@
-EXTRA_PROGRAMS = vi vi-ipc vi-gtk
+EXTRA_PROGRAMS = vi vi-ipc
 
 vi_SOURCES = \
 	$(visrcdir)/cl/cl.h \
@@ -239,20 +239,6 @@ vi_ipc_SOURCES = \
 vi_ipc_LDADD = libvi.la @IPCOBJS@
 vi_ipc_LDFLAGS =
 vi_ipc_DEPENDENCIES = @IPCOBJS@
-
-vi_gtk_SOURCES = \
-	$(visrcdir)/common/util2.c \
-	$(visrcdir)/ipc/ip_run.c \
-	$(visrcdir)/ipc/ip_send.c \
-	$(visrcdir)/ipc/ip_trans.c \
-	$(visrcdir)/ipc/ipc_cmd.c \
-	$(visrcdir)/ipc/ipc_method.c \
-	$(visrcdir)/gtk/gtk_main.c \
-	$(visrcdir)/gtk/gtkvi.c \
-	$(visrcdir)/gtk/gtkviscreen.c \
-	$(visrcdir)/gtk/gtkviwindow.c
-vi_gtk_LDADD = @GTKLIBS@ @LIBOBJS@
-vi_gtk_CFLAGS = @GTKINCS@ @XINCS@
 
 VI=-DVI=\"$(bindir)/`echo vi-ipc | sed '$(transform)'`\"
 CFLAGS=	$(OPTFLAG)

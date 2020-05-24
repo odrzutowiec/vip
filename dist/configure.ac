@@ -260,67 +260,6 @@ AC_CHECK_HEADER(langinfo.h, [
 dnl If the user wants a Gtk IPC front-end for nvi, build it.
 AC_SUBST(vi_programs)
 AC_SUBST(vi_ipc)
-AC_SUBST(GTKLIBS)
-AC_SUBST(GTKINCS)
-AC_MSG_CHECKING(if --enable-gtk option specified)
-AC_ARG_ENABLE(gtk,
-	[  --enable-gtk            Build a Gtk front-end for vi.],
-	[vi_cv_gtk=$enableval], [vi_cv_gtk="no"])
-AC_MSG_RESULT($vi_cv_gtk)
-if test "$vi_cv_gtk" = "yes"; then
-	if $PKG_CONFIG ; then
-	    if test "$vi_cv_widechar" = "yes"; then
-	        AC_MSG_ERROR(
-[*** pkg-config not found. See http://pkgconfig.sourceforge.net])
-	    fi
-
-	else
-	    if ! $PKG_CONFIG --atleast-pkgconfig-version 0.5 ; then
-		if test "$vi_cv_widechar" = "yes"; then
-		    AC_MSG_ERROR(
-[*** pkg-config too old; version 0.5 or better required.])
-		fi
-		PKG_CONFIG=/bin/false
-	    fi
-	fi
-
-	vi_programs="$vi_programs vi-gtk"
-	vi_ipc=vi-ipc
-	AC_MSG_CHECKING(for gtk+)
-	if $PKG_CONFIG gtk+-2.0 ; then
-	      GTKINCS=`$PKG_CONFIG --cflags gtk+-2.0`
-	      GTKLIBS=`$PKG_CONFIG --libs gtk+-2.0`
-
-	      AC_MSG_RESULT(ok)
-	      AC_DEFINE(HAVE_PANGO, 1, [Define is appropriate pango is available.])
-	else
-	    if test "$vi_cv_widechar" = "yes"; then
-	        AC_MSG_ERROR([
-*** gtk+-2.0 is required. The latest version of gtk
-*** is always available from ftp://ftp.gtk.org/.
-		])
-	    else
-		AM_PATH_GTK(1.2.0)
-		GTKINCS="$GTK_CFLAGS"
-		GTKLIBS="$GTK_LIBS $LIBS"
-	    fi
-	fi
-
-	SAVELIBS="$LIBS"
-	LIBS="-lutil $GTKLIBS"
-	AC_CHECK_LIB(nvizvt, zvt_get_ptys,
-		[vi_cv_zvt="yes"], [vi_cv_zvt="no"])
-	if test "$vi_cv_zvt" = "yes"; then
-		GTKLIBS="-lnvizvt $LIBS"
-		AC_DEFINE(HAVE_ZVT, 1, [Define is appropriate zvt is available.])
-	fi
-	LIBS="$SAVELIBS"
-#	AC_PATH_PROG(vi_cv_gnome_config, gnome-config, no)
-#	if test "$vi_cv_gnome_config" != "no"; then
-#		ZVTLIBS=`$vi_cv_gnome_config zvt --libs`
-#		GTKLIBS="$ZVTLIBS $GTKLIBS"
-#	fi
-fi
 
 AC_SUBST(IPCOBJS)
 dnl Check for threads
