@@ -328,12 +328,6 @@ install_common:
 	@$(rm) -rf $(DESTDIR)$(datadir)/vi
 	@$(mkdir) $(DESTDIR)$(datadir)/vi && \
 	    $(chmod) $(dmode) $(DESTDIR)$(datadir)/vi
-	@echo "Installing message catalogs: $(datadir)/vi/catalog ..."
-	@$(mkdir) $(DESTDIR)$(datadir)/vi/catalog && \
-	    $(chmod) $(dmode) $(DESTDIR)$(datadir)/vi/catalog
-	@(cd $(visrcdir)/catalog && \
-	    $(cp) $(cat) $(DESTDIR)$(datadir)/vi/catalog && \
-	    cd $(DESTDIR)$(datadir)/vi/catalog && $(chmod) $(fmode) *)
 	@echo "Installing recover script: $(datadir)/vi/recover ..."
 	@($(cp) recover $(DESTDIR)$(datadir)/vi/recover && \
 	    $(chmod) $(emode) $(DESTDIR)$(datadir)/vi/recover)

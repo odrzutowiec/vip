@@ -14,8 +14,6 @@ cd $S && sco $X && vi $X && echo "go to $VERSION" | sccs delget $X
 
 # Build the distribution.
 cd $S/dist && sh ./distrib
-cd $S/catalog && make clean all check && rm dump __ck1 __ck2 && \
-    chmod 444 english* *.check
 
 # Build a version.
 cd $S && rm -rf build.local && mkdir build.local && cd build.local && \
