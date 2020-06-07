@@ -431,11 +431,6 @@ AC_CHECK_FUNCS(unsetenv,, [need_env=yes])
 AC_FUNC_MMAP
 AC_FUNC_VFORK
 
-dnl If we needed setenv or unsetenv, add in the clib/env.c replacement file.
-if test "$need_env" = yes; then
-	LIBOBJS="env.o $LIBOBJS"
-fi
-
 dnl If we need strsep, add it and define it so we get a prototype.
 if test "$need_strsep" = yes; then
 	LIBOBJS="strsep.o $LIBOBJS"

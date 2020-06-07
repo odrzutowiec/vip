@@ -190,21 +190,6 @@ EXTRA_libvi_la_SOURCES = \
 	$(visrcdir)/common/log.c \
 	$(visrcdir)/common/log1.c \
 	$(visrcdir)/common/log4.c \
-	$(visrcdir)/clib/bsearch.c \
-	$(visrcdir)/clib/env.c \
-	$(visrcdir)/clib/gethostname.c \
-	$(visrcdir)/clib/iswblank.c \
-	$(visrcdir)/clib/memchr.c \
-	$(visrcdir)/clib/memset.c \
-	$(visrcdir)/clib/mkstemp.c \
-	$(visrcdir)/clib/mmap.c \
-	$(visrcdir)/clib/snprintf.c \
-	$(visrcdir)/clib/strdup.c \
-	$(visrcdir)/clib/strpbrk.c \
-	$(visrcdir)/clib/strsep.c \
-	$(visrcdir)/clib/strtol.c \
-	$(visrcdir)/clib/strtoul.c \
-	$(visrcdir)/clib/vsnprintf.c \
 	$(visrcdir)/common/pthread.c \
 	$(visrcdir)/common/vi_auto.c \
 	$(visrcdir)/common/vi_rec.c
