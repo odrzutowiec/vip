@@ -2,46 +2,10 @@ visrcdir= @srcdir@/..
 
 ACLOCAL_AMFLAGS = -I m4
 
-if BUNDLED_DB
-    DB_C = $(visrcdir)/common/vi_db1.c
-    DB_SRCS = \
-	$(visrcdir)/db.1.85/recno/rec_delete.c \
-	$(visrcdir)/db.1.85/recno/rec_get.c \
-	$(visrcdir)/db.1.85/recno/rec_put.c \
-	$(visrcdir)/db.1.85/recno/rec_utils.c \
-	$(visrcdir)/db.1.85/recno/rec_open.c \
-	$(visrcdir)/db.1.85/recno/rec_seq.c \
-	$(visrcdir)/db.1.85/recno/rec_close.c \
-	$(visrcdir)/db.1.85/recno/rec_search.c \
-	$(visrcdir)/db.1.85/db/db.c \
-	$(visrcdir)/db.1.85/btree/bt_debug.c \
-	$(visrcdir)/db.1.85/btree/bt_get.c \
-	$(visrcdir)/db.1.85/btree/bt_open.c \
-	$(visrcdir)/db.1.85/btree/bt_delete.c \
-	$(visrcdir)/db.1.85/btree/bt_put.c \
-	$(visrcdir)/db.1.85/btree/bt_overflow.c \
-	$(visrcdir)/db.1.85/btree/bt_close.c \
-	$(visrcdir)/db.1.85/btree/bt_page.c \
-	$(visrcdir)/db.1.85/btree/bt_split.c \
-	$(visrcdir)/db.1.85/btree/bt_search.c \
-	$(visrcdir)/db.1.85/btree/bt_utils.c \
-	$(visrcdir)/db.1.85/btree/bt_seq.c \
-	$(visrcdir)/db.1.85/btree/bt_conv.c \
-	$(visrcdir)/db.1.85/mpool/mpool.c \
-	$(visrcdir)/db.1.85/hash/hash_bigkey.c \
-	$(visrcdir)/db.1.85/hash/hash_log2.c \
-	$(visrcdir)/db.1.85/hash/hash.c \
-	$(visrcdir)/db.1.85/hash/hash_func.c \
-	$(visrcdir)/db.1.85/hash/hash_page.c \
-	$(visrcdir)/db.1.85/hash/hash_buf.c \
-	$(visrcdir)/db.1.85/hash/hsearch.c
-else
     DB_C = $(visrcdir)/common/vi_db.c
-endif
 
 lib_LTLIBRARIES = libvi.la
 libvi_la_SOURCES = \
-	$(DB_SRCS) \
 	$(visrcdir)/common/api.c \
 	$(visrcdir)/common/conv.c \
 	$(visrcdir)/common/conv.h \
@@ -227,12 +191,7 @@ vi_ipc_DEPENDENCIES = @IPCOBJS@
 
 VI=-DVI=\"$(bindir)/`echo vi-ipc | sed '$(transform)'`\"
 CFLAGS=	$(OPTFLAG)
-if BUNDLED_DB
-AM_CPPFLAGS=	 -D__DBINTERFACE_PRIVATE -I$(visrcdir)/db.1.85/include \
-		 -D__REGEX_PRIVATE -I. -I$(visrcdir)/include $(VI)
-else
 AM_CPPFLAGS=	 -D__REGEX_PRIVATE -I. -I$(visrcdir)/include $(VI)
-endif
 SHRPENV=@shrpenv@
 
 chmod=	@vi_cv_path_chmod@

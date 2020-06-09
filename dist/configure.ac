@@ -415,9 +415,6 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
 
-AC_CHECK_HEADER(sys/cdefs.h, [],
-	[AC_CONFIG_FILES([sys/cdefs.h:../db.1.85/PORT/include/cdefs.h])])
-
 dnl Checks for library functions.
 VI_CV_REPLACE_FUNCS(bsearch gethostname memchr memset)
 VI_CV_REPLACE_FUNCS(mkstemp mmap strdup strpbrk)
@@ -785,9 +782,6 @@ if test "$vi_cv_proto_fprintf" = yes; then
 		[Define when fprintf prototype not in an obvious place.])
 fi
 
-AC_ARG_WITH(db_type,
-	[  --with-db=bundled|system Which db to use. ])
-
 dnl Check for DB 3
 AC_ARG_WITH(db_prefix,
 	[  --with-db-prefix=PFX    Path to db installation. ])
@@ -800,115 +794,96 @@ if test "x$with_db_prefix" != "x"; then
 	with_db_type="system"
 fi
 
-AC_MSG_CHECKING(which db to use)
-case "$with_db_type" in
-"system")
-	;;
-*)
-	with_db_type="bundled"
-	;;
-esac
-AC_MSG_RESULT($with_db_type)
-AM_CONDITIONAL(BUNDLED_DB, test $with_db_type = bundled)
+SAVELDFLAGS="$LDFLAGS"
+SAVELIBS="$LIBS"
 
-case "$with_db_type" in
-bundled)
-	AC_DEFINE(USE_BUNDLED_DB, 1, [Define when using bundled db.])
-	LIBOBJS="log1.o $LIBOBJS"
-	;;
-system)
-	SAVELDFLAGS="$LDFLAGS"
-	SAVELIBS="$LIBS"
+if test "x$with_db_prefix" != "x"; then
+	LDFLAGS="-L$with_db_prefix/lib $LDFLAGS"
+	CPPFLAGS="-I$with_db_prefix/include $CPPFLAGS"
+	with_db_type="system"
+fi
 
-	if test "x$with_db_prefix" != "x"; then
-		LDFLAGS="-L$with_db_prefix/lib $LDFLAGS"
-		CPPFLAGS="-I$with_db_prefix/include $CPPFLAGS"
-		with_db_type="system"
+LIBS="$LIBS -ldb"
+AC_TRY_LINK([#include <db.h>],
+	[db_create(NULL,NULL,0)],
+	[vi_cv_dbfatal="no"], [vi_cv_dbfatal="yes"])
+if test "$vi_cv_dbfatal" = "yes"; then
+	AC_MSG_ERROR([Need DB 3.])
+fi
+
+LIBS="$SAVELIBS"
+LDFLAGS="$SAVELDFLAGS"
+
+AC_SUBST(dl_src)
+AC_MSG_CHECKING(if --enable-dynamic-loading option specified)
+AC_ARG_ENABLE(dynamic-loading,
+	[  --enable-dynamic-loading Load DB 3 dynamically.],
+	[vi_cv_dl=$enableval], [vi_cv_dl="no"])
+AC_MSG_RESULT($vi_cv_dl)
+if test "$vi_cv_dl" = yes; then
+	AC_CHECK_LIB(dl, dlopen,
+		[vi_cv_dlfatal="no"], [vi_cv_dlfatal="yes"])
+	if test "$vi_cv_dlfatal" = "yes"; then
+		AC_MSG_ERROR([Need dl to support dynamic loading.])
 	fi
+	OLDPATH="$PATH"
 
-	LIBS="$LIBS -ldb"
-	AC_TRY_LINK([#include <db.h>],
-		[db_create(NULL,NULL,0)],
-		[vi_cv_dbfatal="no"], [vi_cv_dbfatal="yes"])
-	if test "$vi_cv_dbfatal" = "yes"; then
-		AC_MSG_ERROR([Need DB 3.])
+	PATH="$with_db_prefix/lib:/usr/lib:/lib"
+	AC_PATH_PROG(vi_cv_path_db3, libdb-3.so, no)
+	if test "$vi_cv_path_db3" = no; then
+		AC_MSG_ERROR([Path of libdb-3.so not found.])
 	fi
+	PATH="$OLDPATH"
 
-	LIBS="$SAVELIBS"
-	LDFLAGS="$SAVELDFLAGS"
-
-	AC_SUBST(dl_src)
-	AC_MSG_CHECKING(if --enable-dynamic-loading option specified)
-	AC_ARG_ENABLE(dynamic-loading,
-		[  --enable-dynamic-loading Load DB 3 dynamically.],
-		[vi_cv_dl=$enableval], [vi_cv_dl="no"])
-	AC_MSG_RESULT($vi_cv_dl)
-	if test "$vi_cv_dl" = yes; then
-		AC_CHECK_LIB(dl, dlopen,
-			[vi_cv_dlfatal="no"], [vi_cv_dlfatal="yes"])
-		if test "$vi_cv_dlfatal" = "yes"; then
-			AC_MSG_ERROR([Need dl to support dynamic loading.])
-		fi
-		OLDPATH="$PATH"
-
-		PATH="$with_db_prefix/lib:/usr/lib:/lib"
-		AC_PATH_PROG(vi_cv_path_db3, libdb-3.so, no)
-		if test "$vi_cv_path_db3" = no; then
-			AC_MSG_ERROR([Path of libdb-3.so not found.])
-		fi
-		PATH="$OLDPATH"
-
-		AC_DEFINE(USE_DYNAMIC_LOADING, 1,
-				[Define when dynamically loading DB 3.])
-		LIBOBJS="dldb.o $LIBOBJS"
-		dl_src=../common/dldb.c
-		LIBS="-ldl $LIBS"
-	else
-		LIBS="-ldb $LIBS"
-		if test "X$with_db_prefix" != "X"; then
-			LDFLAGS="`echo $with_db_prefix/lib | sed "$LRscript"` $LDFLAGS"
-		fi
+	AC_DEFINE(USE_DYNAMIC_LOADING, 1,
+			[Define when dynamically loading DB 3.])
+	LIBOBJS="dldb.o $LIBOBJS"
+	dl_src=../common/dldb.c
+	LIBS="-ldl $LIBS"
+else
+	LIBS="-ldb $LIBS"
+	if test "X$with_db_prefix" != "X"; then
+		LDFLAGS="`echo $with_db_prefix/lib | sed "$LRscript"` $LDFLAGS"
 	fi
+fi
 
-	AC_ARG_WITH(db_build,
-		[  --with-db-build=prefix  Path to db build. ])
-	if test "x$with_db_build" != "x"; then
-		vi_cv_dbsrc=`$AWK '/^srcdir/ {gsub("srcdir[[ \t]]*=","");print $1}' \
-			     $with_db_build/Makefile`
-		case $with_db_build in
-		*[[\\/]]);;
-		*)
-		    with_db_build="$with_db_build/";;
-		esac
-		case $vi_cv_dbsrc in
-		[[\\/]]*);;
-		*)
-		    vi_cv_dbsrc="$with_db_build$vi_cv_dbsrc";;
-		esac
-	fi;
+AC_ARG_WITH(db_build,
+	[  --with-db-build=prefix  Path to db build. ])
+if test "x$with_db_build" != "x"; then
+	vi_cv_dbsrc=`$AWK '/^srcdir/ {gsub("srcdir[[ \t]]*=","");print $1}' \
+		     $with_db_build/Makefile`
+	case $with_db_build in
+	*[[\\/]]);;
+	*)
+	    with_db_build="$with_db_build/";;
+	esac
+	case $vi_cv_dbsrc in
+	[[\\/]]*);;
+	*)
+	    vi_cv_dbsrc="$with_db_build$vi_cv_dbsrc";;
+	esac
+fi;
 
-	vi_cv_db4="no"
-	AC_ARG_ENABLE(log4,
-		[  --enable-db4-logging    Enable experimental/broken db4 logging.],
-		[
-		AC_MSG_CHECKING(for DB 4)
-		AC_EGREP_CPP([^4],
-			[#include <db.h>
-		DB_VERSION_MAJOR],
-			[vi_cv_db4="yes"], [vi_cv_db4="no"])
-		AC_MSG_RESULT($vi_cv_db4)
-		])
-	if test "$vi_cv_db4" = "yes"; then
-		DB_CPPFLAGS="-I$vi_cv_dbsrc/include $DB_CPPFLAGS"
-		DB_CPPFLAGS="-I$vi_cv_dbsrc/include_auto $DB_CPPFLAGS"
-		DB_CPPFLAGS="-I$with_db_build $DB_CPPFLAGS"
-		AC_DEFINE(USE_DB4_LOGGING, 1, [Define when using db4 logging.])
-		LIBOBJS="log4.o vi_auto.o vi_rec.o $LIBOBJS"
-	else
-		LIBOBJS="log.o $LIBOBJS"
-	fi
-	;;
-esac
+vi_cv_db4="no"
+AC_ARG_ENABLE(log4,
+	[  --enable-db4-logging    Enable experimental/broken db4 logging.],
+	[
+	AC_MSG_CHECKING(for DB 4)
+	AC_EGREP_CPP([^4],
+		[#include <db.h>
+	DB_VERSION_MAJOR],
+		[vi_cv_db4="yes"], [vi_cv_db4="no"])
+	AC_MSG_RESULT($vi_cv_db4)
+	])
+if test "$vi_cv_db4" = "yes"; then
+	DB_CPPFLAGS="-I$vi_cv_dbsrc/include $DB_CPPFLAGS"
+	DB_CPPFLAGS="-I$vi_cv_dbsrc/include_auto $DB_CPPFLAGS"
+	DB_CPPFLAGS="-I$with_db_build $DB_CPPFLAGS"
+	AC_DEFINE(USE_DB4_LOGGING, 1, [Define when using db4 logging.])
+	LIBOBJS="log4.o vi_auto.o vi_rec.o $LIBOBJS"
+else
+	LIBOBJS="log.o $LIBOBJS"
+fi
 
 dnl We compile in nvi's RE routines unless the user specifies otherwise.
 AC_MSG_CHECKING(if --disable-re option specified)

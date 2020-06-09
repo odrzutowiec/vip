@@ -123,14 +123,6 @@
 
 /*
  * XXX
- * "DB" isn't always portable, and we want the private information.
- */
-#define DB      L__DB
-#undef	pgno_t			/* IRIX has its own version. */
-#define	pgno_t	L__db_pgno_t
-
-/*
- * XXX
  * 4.4BSD extension to provide lock values in the open(2) call.
  */
 #ifndef O_EXLOCK
