@@ -17,9 +17,6 @@ common/extern.h
 *_def.h
 ex/extern.h
 ex/version.h
-ip/extern.h
-ipc/extern.h
-ipc/ipc_gen.c
 vi/extern.h
 
 # my build

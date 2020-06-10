@@ -27,7 +27,6 @@ static const char sccsid[] = "$Id: v_search.c,v 10.30 2001/09/11 20:52:46 skimo 
 
 #include "../common/common.h"
 #include "vi.h"
-#include "../ipc/ip.h"
 
 static int v_exaddr __P((SCR *, VICMD *, dir_t));
 static int v_search __P((SCR *, VICMD *, CHAR_T *, size_t, u_int, dir_t));

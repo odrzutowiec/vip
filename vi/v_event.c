@@ -25,7 +25,6 @@ static const char sccsid[] = "$Id: v_event.c,v 8.21 2001/06/25 15:19:31 skimo Ex
 #include <unistd.h>
 
 #include "../common/common.h"
-#include "../ipc/ip.h"
 #include "vi.h"
 
 /*

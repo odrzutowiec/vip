@@ -19,23 +19,6 @@ echo "Running autoconf"
 autoconf 2>&1 | sed '/warning: AC_TRY_RUN called without default/d'
 chmod 555 configure config.guess config.sub install-sh
 
-msg="/* Do not edit: automatically built by build/distrib. */"
-# Build automatically generated header files.
-f=../ipc/ipc_def.h
-echo "Building $f"
-rm -f $f
-(echo "$msg" && \
-    awk -f ../ipc/ipc.awk ../ipc/ipc_cmd.c &&
-    awk -f ../ipc/vipc.awk ../ip/ip_read.c) > $f
-chmod 444 $f
-
-f=../ipc/ipc_gen.c
-echo "Building $f"
-rm -f $f
-(echo "$msg" && \
-    perl -n ../ip/vipc.pl ../ip/ip_read.c) > $f
-chmod 444 $f
-
 f=../ex/ex_def.h
 echo "Building $f"
 rm -f $f
