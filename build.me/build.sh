@@ -3,7 +3,8 @@
 cd ../dist &&\
 ./distrib &&\
 cd - &&\
-../dist/configure --enable-shared=no --enable-static=no --enable-widechar --enable-threads &&\
+#../dist/configure --enable-debug --enable-shared=no --enable-static=no --enable-widechar --enable-threads --disable-re &&\
+#../dist/configure --enable-debug --enable-shared=no --enable-static=no --enable-threads --disable-re &&\
+../dist/configure --enable-debug --enable-shared=no --enable-static=no --enable-widechar --enable-threads &&\
 make &&\
-sudo rm -rf /usr/local/bin/vip &&\
-sudo cp vi /usr/local/bin/vip
+./deploy.sh
