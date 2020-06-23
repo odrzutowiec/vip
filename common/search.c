@@ -229,9 +229,16 @@ f_search(SCR *sp, MARK *fm, MARK *rm, CHAR_T *ptrn, size_t plen, CHAR_T **eptrn,
 		vtrace(sp, "F search: %lu from %u to %u\n",
 		    lno, coff, len != 0 ? len - 1 : len);
 #endif
+
+		/* Emulating REG_STARTEND - get a line slice based on match[0] range */
+		int ls_so = match[0].rm_so;
+		int ls_eo = match[0].rm_eo;
+		CHAR_T *ls = v_wstrdup(sp, l + ls_so, ls_eo);
+
 		/* Search the line. */
-		eval = regexec(&sp->re_c, l, 1, match,
-		    (match[0].rm_so == 0 ? 0 : REG_NOTBOL) | REG_STARTEND);
+		eval = regwexec(&sp->re_c, ls, 1, match,
+		    (match[0].rm_so == 0 ? 0 : REG_NOTBOL) | 0);
+
 		if (eval == REG_NOMATCH)
 			continue;
 		if (eval != 0) {
@@ -245,6 +252,10 @@ f_search(SCR *sp, MARK *fm, MARK *rm, CHAR_T *ptrn, size_t plen, CHAR_T **eptrn,
 		/* Warn if the search wrapped. */
 		if (wrapped && LF_ISSET(SEARCH_WMSG))
 			search_msg(sp, S_WRAP);
+
+		/* Emulating REG_STARTEND - readd the offset to the match */
+		free(ls);
+	    	match[0].rm_so += ls_so;
 
 #if defined(DEBUG) && 0
 		vtrace(sp, "F search: %qu to %qu\n",
@@ -366,9 +377,15 @@ b_search(SCR *sp, MARK *fm, MARK *rm, CHAR_T *ptrn, size_t plen, CHAR_T **eptrn,
 		vtrace(sp,
 		    "B search: %lu from 0 to %qu\n", lno, match[0].rm_eo);
 #endif
+		/* Emulating REG_STARTEND - get a line slice based on match[0] range */
+		int ls_so = match[0].rm_so;
+		int ls_eo = match[0].rm_eo;
+		CHAR_T *ls = v_wstrdup(sp, l + ls_so, ls_eo);
+
 		/* Search the line. */
-		eval = regexec(&sp->re_c, l, 1, match,
-		    (match[0].rm_eo == len ? 0 : REG_NOTEOL) | REG_STARTEND);
+		eval = regwexec(&sp->re_c, ls, 1, match,
+		    (match[0].rm_eo == len ? 0 : REG_NOTEOL) | 0);
+
 		if (eval == REG_NOMATCH)
 			continue;
 		if (eval != 0) {
@@ -378,6 +395,10 @@ b_search(SCR *sp, MARK *fm, MARK *rm, CHAR_T *ptrn, size_t plen, CHAR_T **eptrn,
 				(void)sp->gp->scr_bell(sp);
 			break;
 		}
+
+		/* Emulating REG_STARTEND - readd the offset to the match */
+		free(ls);
+	    	match[0].rm_so += ls_so;
 
 		/* Check for a match starting past the cursor. */
 		if (coff != 0 && match[0].rm_so >= coff)
@@ -402,9 +423,19 @@ b_search(SCR *sp, MARK *fm, MARK *rm, CHAR_T *ptrn, size_t plen, CHAR_T **eptrn,
 			if (match[0].rm_so >= len)
 				break;
 			match[0].rm_eo = len;
-			eval = regexec(&sp->re_c, l, 1, match,
-			    (match[0].rm_so == 0 ? 0 : REG_NOTBOL) |
-			    REG_STARTEND);
+
+			/* Emulating REG_STARTEND - get a line slice based on match[0] range */
+			ls_so = match[0].rm_so;
+			ls_eo = match[0].rm_eo;
+			*ls = v_wstrdup(sp, l + ls_so, ls_eo);
+
+			eval = regwexec(&sp->re_c, ls, 1, match,
+			    (match[0].rm_so == 0 ? 0 : REG_NOTBOL) | 0);
+
+			/* Emulating REG_STARTEND - readd the offset to the match */
+			free(ls);
+			match[0].rm_so += ls_so;
+
 			if (eval == REG_NOMATCH)
 				break;
 			if (eval != 0) {

@@ -884,23 +884,8 @@ else
 	LIBOBJS="log.o $LIBOBJS"
 fi
 
-dnl We compile in nvi's RE routines unless the user specifies otherwise.
-AC_MSG_CHECKING(if --disable-re option specified)
-AC_ARG_ENABLE(re,
-	[  --disable-re            DON'T use the nvi-provided RE routines.],
-	[if test "$enable_re" = "yes"; then
-		vi_cv_re_lib="bundled RE"
-	else
-		vi_cv_re_lib="other RE"
-	fi],[vi_cv_re_lib="bundled RE"])
-AC_MSG_RESULT($vi_cv_re_lib)
-case "$vi_cv_re_lib" in
-"bundled RE")
-	CPPFLAGS="-I\$(visrcdir)/regex $CPPFLAGS"
-	LIBOBJS="regcomp.o regerror.o regexec.o regfree.o $LIBOBJS";;
-"other RE")
-	;;
-esac
+dnl We compile in nvi's TRE regexp routines
+LIBS="-ltre $LIBS"
 
 AC_OUTPUT(Makefile port.h:port.h.in compat.h:port.h.in
     pathnames.h:pathnames.h.in recover:recover.in)

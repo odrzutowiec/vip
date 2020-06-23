@@ -420,6 +420,7 @@ v_esearch(SCR *sp, VICMD *vp)
 static int
 v_search(SCR *sp, VICMD *vp, CHAR_T *ptrn, size_t plen, u_int flags, dir_t dir)
 {
+	
 	/* Display messages. */
 	LF_SET(SEARCH_MSG);
 

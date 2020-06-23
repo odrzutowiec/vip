@@ -114,7 +114,7 @@ subagain:	return (ex_subagain(sp, cmdp));
 			/*
 			 * !!!
 			 * Nul terminate the pattern string -- it's passed
-			 * to regcomp which doesn't understand anything else.
+			 * to regwcomp which doesn't understand anything else.
 			 */
 			*t = '\0';
 			break;
@@ -537,7 +537,8 @@ noargs:	if (F_ISSET(sp, SC_VI) && sp->c_suffix && (lflag || nflag || pflag)) {
 		do_eol_match = 1;
 
 		/* It's not nul terminated, but we pretend it is. */
-		eflags = REG_STARTEND;
+		// TODO: eflags = REG_STARTEND;
+		eflags = 0;
 
 		/*
 		 * The search area is from s + offset to the EOL.
@@ -550,7 +551,7 @@ nextmatch:	match[0].rm_so = 0;
 		match[0].rm_eo = len;
 
 		/* Get the next match. */
-		eval = regexec(re, s + offset, 10, match, eflags);
+		eval = regwexec(re, s + offset, 10, match, eflags);
 
 		/*
 		 * There wasn't a match or if there was an error, deal with
@@ -898,7 +899,7 @@ re_compile(SCR *sp, CHAR_T *ptrn, size_t plen, CHAR_T **ptrnp, size_t *lenp, reg
 	if (LF_ISSET(SEARCH_IC))
 		reflags |= REG_ICASE;
 	if (LF_ISSET(SEARCH_LITERAL))
-		reflags |= REG_NOSPEC;
+		; //reflags |= REG_NOSPEC;
 	if (!LF_ISSET(SEARCH_NOOPT | SEARCH_CSCOPE | SEARCH_TAG)) {
 		if (O_ISSET(sp, O_EXTENDED))
 			reflags |= REG_EXTENDED;
@@ -985,7 +986,7 @@ iclower:	for (p = ptrn, len = plen; len > 0; ++p, --len)
 	 * Regcomp isn't 8-bit clean, so we just lost if the pattern
 	 * contained a nul.  Bummer!
 	 */
-	if ((rval = regcomp(rep, ptrn, /* plen, */ reflags)) != 0) {
+	if ((rval = regwcomp(rep, ptrn, /* plen, */ reflags)) != 0) {
 		if (LF_ISSET(SEARCH_MSG))
 			re_error(sp, rval, rep); 
 		return (1);

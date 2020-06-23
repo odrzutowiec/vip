@@ -27,7 +27,7 @@
  * them in a very specific order, regardless.
  */
 #include "vi_db.h"
-#include <regex.h>
+#include <tre/regex.h>
 
 /*
  * Forward structure declarations.  Not pretty, but the include files

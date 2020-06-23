@@ -139,15 +139,6 @@ libvi_la_SOURCES = \
 	$(visrcdir)/vi/vs_smap.c \
 	$(visrcdir)/vi/vs_split.c
 EXTRA_libvi_la_SOURCES = \
-	$(visrcdir)/regex/regcomp.c \
-	$(visrcdir)/regex/regerror.c \
-	$(visrcdir)/regex/regexec.c \
-	$(visrcdir)/regex/regfree.c \
-	$(visrcdir)/regex/cclass.h \
-	$(visrcdir)/regex/cname.h \
-	$(visrcdir)/regex/regex.h \
-	$(visrcdir)/regex/regex2.h \
-	$(visrcdir)/regex/utils.h \
 	$(visrcdir)/common/vi_db.c \
 	$(visrcdir)/common/vi_db1.c \
 	$(visrcdir)/common/dldb.c \
