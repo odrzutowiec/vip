@@ -18,7 +18,7 @@ static const char sccsid[] = "$Id: options.c,v 10.65 2002/01/18 22:34:43 skimo E
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>

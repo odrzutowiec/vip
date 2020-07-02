@@ -16,7 +16,7 @@ static const char sccsid[] = "$Id: ex_global.c,v 10.30 2001/06/25 15:19:16 skimo
 #include <sys/types.h>
 #include <sys/queue.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -111,7 +111,7 @@ usage:		ex_emsg(sp, cmdp->cmd->usage, EXM_USAGE);
 			/*
 			 * !!!
 			 * Nul terminate the pattern string -- it's passed
-			 * to regcomp which doesn't understand anything else.
+			 * to regwcomp which doesn't understand anything else.
 			 */
 			*t = L('\0');
 			break;
@@ -212,7 +212,8 @@ usage:		ex_emsg(sp, cmdp->cmd->usage, EXM_USAGE);
 		match[0].rm_so = 0;
 		match[0].rm_eo = len;
 		switch (eval =
-		    regexec(&sp->re_c, dbp, 0, match, REG_STARTEND)) {
+		    // TODO: regwexec(&sp->re_c, dbp, 0, match, REG_STARTEND)) {
+		    regwexec(&sp->re_c, dbp, 0, match, 0)) {
 		case 0:
 			if (cmd == V)
 				continue;

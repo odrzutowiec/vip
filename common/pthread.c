@@ -14,7 +14,7 @@ static const char sccsid[] = "$Id: pthread.c,v 1.4 2000/07/22 14:52:37 skimo Exp
 #include <sys/types.h>
 #include <sys/queue.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>

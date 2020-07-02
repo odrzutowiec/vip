@@ -19,7 +19,7 @@ static const char sccsid[] = "$Id: api.c,v 8.40 2002/06/08 19:30:33 skimo Exp $ 
 #include <sys/queue.h>
 #include <sys/time.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -139,15 +139,6 @@ libvi_la_SOURCES = \
 	$(visrcdir)/vi/vs_smap.c \
 	$(visrcdir)/vi/vs_split.c
 EXTRA_libvi_la_SOURCES = \
-	$(visrcdir)/regex/regcomp.c \
-	$(visrcdir)/regex/regerror.c \
-	$(visrcdir)/regex/regexec.c \
-	$(visrcdir)/regex/regfree.c \
-	$(visrcdir)/regex/cclass.h \
-	$(visrcdir)/regex/cname.h \
-	$(visrcdir)/regex/regex.h \
-	$(visrcdir)/regex/regex2.h \
-	$(visrcdir)/regex/utils.h \
 	$(visrcdir)/common/vi_db.c \
 	$(visrcdir)/common/vi_db1.c \
 	$(visrcdir)/common/dldb.c \
@@ -179,7 +170,7 @@ vi_LDFLAGS = @CURSLDFLAGS@
 
 VI=-DVI=\"$(bindir)/`echo vi-ipc | sed '$(transform)'`\"
 CFLAGS=	$(OPTFLAG)
-AM_CPPFLAGS=	 -D__REGEX_PRIVATE -I. -I$(visrcdir)/include $(VI)
+AM_CPPFLAGS=	 -D__REGEX_PRIVATE -I. $(VI)
 SHRPENV=@shrpenv@
 
 chmod=	@vi_cv_path_chmod@

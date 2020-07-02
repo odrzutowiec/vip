@@ -14,7 +14,7 @@
  */
 #include <sys/types.h>
 #include <sys/queue.h>
-#include <bitstring.h>
+#include "../common/bitstring.h"
 /*
  * Porting information built at configuration time.  Included before
  * any of nvi's include files.
@@ -27,7 +27,7 @@
  * them in a very specific order, regardless.
  */
 #include "vi_db.h"
-#include <regex.h>
+#include <tre/regex.h>
 
 /*
  * Forward structure declarations.  Not pretty, but the include files

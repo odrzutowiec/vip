@@ -27,7 +27,7 @@ static const char sccsid[] = "$Id: ex_tag.c,v 10.50 2004/03/16 14:09:11 skimo Ex
 #include <sys/stat.h>
 #include <sys/time.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>

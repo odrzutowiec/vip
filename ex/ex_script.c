@@ -29,7 +29,7 @@ static const char sccsid[] = "$Id: ex_script.c,v 10.38 2001/06/25 15:19:19 skimo
 #include <sys/time.h>
 #include <sys/wait.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>		/* XXX: OSF/1 bug: include before <grp.h> */

@@ -22,6 +22,7 @@ vi/extern.h
 # my build
 build.me/*
 !build.me/build.sh
+!build.me/deploy.sh
 
 # other build artifeacts
 docs/vi.man/vi.0

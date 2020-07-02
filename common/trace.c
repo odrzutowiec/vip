@@ -15,7 +15,7 @@ static const char sccsid[] = "$Id: trace.c,v 8.4 1997/08/03 15:04:23 bostic Exp 
 
 #include <sys/queue.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <stdio.h>
 
 #ifdef __STDC__

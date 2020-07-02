@@ -18,7 +18,7 @@ static const char sccsid[] = "$Id: db1.c,v 10.1 2002/03/09 12:53:57 skimo Exp $ 
 #include <sys/time.h>
 #include <sys/stat.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

@@ -17,7 +17,7 @@ static const char sccsid[] = "$Id: v_search.c,v 10.30 2001/09/11 20:52:46 skimo 
 #include <sys/queue.h>
 #include <sys/time.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -420,6 +420,7 @@ v_esearch(SCR *sp, VICMD *vp)
 static int
 v_search(SCR *sp, VICMD *vp, CHAR_T *ptrn, size_t plen, u_int flags, dir_t dir)
 {
+	
 	/* Display messages. */
 	LF_SET(SEARCH_MSG);
 

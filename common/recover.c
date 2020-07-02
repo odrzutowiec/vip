@@ -25,7 +25,7 @@ static const char sccsid[] = "$Id: recover.c,v 10.31 2001/11/01 15:24:44 skimo E
  */
 #include <sys/file.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>

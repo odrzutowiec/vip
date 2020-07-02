@@ -20,7 +20,7 @@ static const char sccsid[] = "$Id: ex_cscope.c,v 10.21 2003/11/05 17:11:54 skimo
 #include <sys/time.h>
 #include <sys/wait.h>
 
-#include <bitstring.h>
+#include "../common/bitstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
