@@ -9,15 +9,6 @@ date=`date +%Y-%m-%d`
     sh distrib --ignore-deps
     rm export
 )
-(cd $dir/docs
-    mkdir html
-    for i in edit exref vi.man vi.ref vitut; do 
-	(cd $i; 
-	 make;
-	 rm -f core # grops sometimes dumps core on me
-        ); 
-    done
-)
 (cd $dir
     perl -pi -e "s/version 1.80/version $version/" README
     perl -pi -e "s(%H%)($date)" README

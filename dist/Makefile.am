@@ -192,46 +192,6 @@ install-exec-hook:
 	cd $(DESTDIR)$(bindir) && $(ln) \
 		`echo vi | sed '$(transform)'` `echo view | sed '$(transform)'`
 
-install-data-local: install_common
-	@[ -d $(DESTDIR)$(mandir) ] || \
-	    ($(mkdir) $(DESTDIR)$(mandir) && \
-	     $(chmod) $(dmode) $(DESTDIR)$(mandir))
-	@[ -d $(DESTDIR)$(mandir)/cat1 ] || \
-	    ($(mkdir) $(DESTDIR)$(mandir)/cat1 && \
-	     $(chmod) $(dmode) $(DESTDIR)$(mandir)/cat1)
-	@echo "Installing man pages: $(DESTDIR)$(mandir) ..."
-	@cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo vi.0 | sed '$(transform)'`
-	@$(cp) $(visrcdir)/docs/vi.man/vi.0 \
-	    $(DESTDIR)$(mandir)/cat1/`echo vi.0 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(chmod) $(fmode) `echo vi.0 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo ex.0 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo view.0 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/cat1 && $(ln) \
-	    `echo vi.0 | sed '$(transform)'` `echo ex.0 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/cat1 && $(ln) \
-	    `echo vi.0 | sed '$(transform)'` `echo view.0 | sed '$(transform)'`
-	@[ -d $(DESTDIR)$(mandir)/man1 ] || \
-	    ($(mkdir) $(DESTDIR)$(mandir)/man1 && \
-	     $(chmod) $(dmode) $(DESTDIR)$(mandir)/man1)
-	@cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo vi.1 | sed '$(transform)'`
-	@$(cp) $(visrcdir)/docs/vi.man/vi.1 \
-	    $(DESTDIR)$(mandir)/man1/`echo vi.1 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/man1 && \
-	    $(chmod) $(fmode) `echo vi.1 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo ex.1 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo view.1 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/man1 && $(ln) \
-	    `echo vi.1 | sed '$(transform)'` `echo ex.1 | sed '$(transform)'`
-	@cd $(DESTDIR)$(mandir)/man1 && $(ln) \
-	    `echo vi.1 | sed '$(transform)'` `echo view.1 | sed '$(transform)'`
-
 cat=	dutch english french german ru_SU.KOI8-R spanish swedish
 install_common:
 	@[ -f $(chmod) ] || (echo 'chmod not found.'; exit 1)
@@ -259,15 +219,3 @@ uninstall-local:
 	$(rm) -rf $(DESTDIR)$(datadir)/vi
 	cd $(DESTDIR)$(bindir) && $(rm) -f `echo ex | sed '$(transform)'`
 	cd $(DESTDIR)$(bindir) && $(rm) -f `echo view | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo ex.0 | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo vi.0 | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/cat1 && \
-	    $(rm) -f `echo view.0 | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo ex.1 | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo vi.1 | sed '$(transform)'`
-	cd $(DESTDIR)$(mandir)/man1 && \
-	    $(rm) -f `echo view.1 | sed '$(transform)'`
