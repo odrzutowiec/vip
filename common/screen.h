@@ -165,8 +165,8 @@ struct _scr {
 	CHAR_T	 at_lbuf;		/* Ex/vi: Last executed at buffer. */
 
 					/* Ex/vi: re_compile flags. */
-#define	RE_WSTART	L("[[:<:]]")	/* Ex/vi: not-in-word search pattern. */
-#define	RE_WSTOP	L("[[:>:]]")
+#define	RE_WSTART	L("\\<")	/* Ex/vi: not-in-word search pattern. */
+#define	RE_WSTOP	L("\\>")
 #define RE_WSTART_LEN	(sizeof(RE_WSTART)/sizeof(CHAR_T)-1)
 #define RE_WSTOP_LEN	(sizeof(RE_WSTOP)/sizeof(CHAR_T)-1)
 					/* Ex/vi: flags to search routines. */
