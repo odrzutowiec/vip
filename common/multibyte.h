@@ -1,7 +1,6 @@
 #ifndef MULTIBYTE_H
 #define MULTIBYTE_H
 
-#ifdef USE_WIDECHAR
 #include <wchar.h>
 #include <wctype.h>
 
@@ -25,30 +24,6 @@ typedef	u_int		UCHAR_T;
 #define STRSET		wmemset
 
 #define L(ch)		L ## ch
-
-#else
-typedef	char		RCHAR_T;
-#define RCHAR_T_MAX	CHAR_MAX
-typedef	u_char		CHAR_T;
-#define	MAX_CHAR_T	0xff
-typedef	u_char		UCHAR_T;
-#define RCHAR_BIT	CHAR_BIT
-
-#define ISUPPER		isupper
-#define STRLEN		strlen
-#define STRTOL		strtol
-#define STRTOUL		strtoul
-#define SPRINTF		snprintf
-#define STRCHR		strchr
-#define STRCMP		strcmp
-#define STRPBRK		strpbrk
-#define TOLOWER		tolower
-#define TOUPPER		toupper
-#define STRSET		memset
-
-#define L(ch)		ch
-
-#endif
 
 #define MEMCMP(to, from, n) 						    \
 	memcmp(to, from, (n) * sizeof(*(to)))

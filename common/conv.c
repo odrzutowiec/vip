@@ -40,7 +40,6 @@ typedef int	iconv_t;
 
 #include <locale.h>
 
-#ifdef USE_WIDECHAR
 int 
 raw2int(SCR *sp, const char * str, ssize_t len, CONVWIN *cw, size_t *tolen,
 	CHAR_T **dst)
@@ -311,8 +310,6 @@ cs_int2char(SCR *sp, const CHAR_T * str, ssize_t len, CONVWIN *cw,
     return default_int2char(sp, str, len, cw, tolen, dst, LANGCODESET);
 }
 
-#endif
-
 
 /*
  * PUBLIC: void conv_init __P((SCR *, SCR *));
@@ -324,13 +321,11 @@ conv_init (SCR *orig, SCR *sp)
 	MEMCPY(&sp->conv, &orig->conv, 1);
     else {
 	setlocale(LC_ALL, "");
-#ifdef USE_WIDECHAR
 	sp->conv.sys2int = cs_char2int;
 	sp->conv.int2sys = cs_int2char;
 	sp->conv.file2int = fe_char2int;
 	sp->conv.int2file = fe_int2char;
 	sp->conv.input2int = ie_char2int;
-#endif
 #ifdef USE_ICONV
 	o_set(sp, O_FILEENCODING, OS_STRDUP, nl_langinfo(CODESET), 0);
 	o_set(sp, O_INPUTENCODING, OS_STRDUP, nl_langinfo(CODESET), 0);
@@ -344,7 +339,7 @@ conv_init (SCR *orig, SCR *sp)
 int
 conv_enc (SCR *sp, int option, char *enc)
 {
-#if defined(USE_WIDECHAR) && defined(USE_ICONV)
+#if defined(USE_ICONV)
     iconv_t id;
     char2wchar_t    *c2w;
     wchar2char_t    *w2c;

@@ -35,11 +35,8 @@ static int	 	 opts_abbcmp __P((const void *, const void *));
 static int	 	 opts_cmp __P((const void *, const void *));
 static int	 	 opts_print __P((SCR *, OPTLIST const *));
 
-#ifdef USE_WIDECHAR
 #define OPT_WC	    0
-#else
-#define OPT_WC	    (OPT_NOSAVE | OPT_NDISP)
-#endif
+// TODO: non widechar version had: define OPT_WC(OPT_NOSAVE | OPT_NDISP)
 
 /*
  * O'Reilly noted options and abbreviations are from "Learning the VI Editor",

@@ -25,7 +25,6 @@
  */
 typedef	u_int		ARG_CHAR_T;
 
-#ifdef USE_WIDECHAR
 #define FILE2INT5(sp,buf,n,nlen,w,wlen)					    \
     sp->conv.file2int(sp, n, nlen, &buf, &wlen, &w)
 #define INT2FILE(sp,w,wlen,n,nlen) 					    \
@@ -58,40 +57,6 @@ typedef	u_int		ARG_CHAR_T;
 #define WS		"%ls"
 #define WVS		"%*ls"
 #define WC		"%lc"
-#else
-#define FILE2INT5(sp,buf,n,nlen,w,wlen) \
-    (w = n, wlen = nlen, 0)
-#define INT2FILE(sp,w,wlen,n,nlen) \
-    (n = w, nlen = wlen, 0)
-#define CHAR2INT5(sp,buf,n,nlen,w,wlen) \
-    (w = n, wlen = nlen, 0)
-#define INT2CHAR(sp,w,wlen,n,nlen) \
-    (n = w, nlen = wlen, 0)
-#define INT2SYS(sp,w,wlen,n,nlen) \
-    (n = w, nlen = wlen, 0)
-#define INPUT2INT5(sp,buf,n,nlen,w,wlen) \
-    (w = n, wlen = nlen, 0)
-#define CONST const
-#define ISCNTRL(ch) \
-    iscntrl((ch))
-#define ISDIGIT(ch) \
-    isdigit((ch))
-#define ISPRINT(ch) \
-    isprint((ch))
-#define ISBLANK(ch) \
-    isblank((ch))
-#define ISALPHA(ch) \
-    isalpha((ch))
-#define ISALNUM(ch) \
-    isalnum((ch))
-#define ISSPACE(ch) \
-    isspace((ch))
-#define INTISWIDE(c)	    0
-#define CHAR_WIDTH(sp, ch)  1
-#define WS		"%s"
-#define WVS		"%*s"
-#define WC		"%c"
-#endif
 #define FILE2INT(sp,n,nlen,w,wlen)					    \
     FILE2INT5(sp,sp->wp->cw,n,nlen,w,wlen)
 #define CHAR2INT(sp,n,nlen,w,wlen)					    \

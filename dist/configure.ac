@@ -239,16 +239,6 @@ AC_DEFUN([VI_CV_REPLACE_FUNCS],
 AC_CHECK_FUNCS([$1], , [_AC_LIBOBJ($ac_func)])
 ])
 
-dnl Check if the user wants widechar support.
-AC_MSG_CHECKING(if --enable-widechar option specified)
-AC_ARG_ENABLE(widechar,
-	[  --enable-widechar       Build a wide char aware vi.],
-	[vi_cv_widechar=$enableval], [vi_cv_widechar="no"])
-if test "$vi_cv_widechar" = "yes"; then
-	AC_DEFINE(USE_WIDECHAR, 1, [Define when using wide characters.])
-fi
-AC_MSG_RESULT($vi_cv_widechar)
-
 dnl Check whether we can use iconv
 AC_CHECK_HEADER(langinfo.h, [
 	AC_CHECK_HEADER(iconv.h, [
@@ -313,13 +303,8 @@ dnl 	[
 		CURSLDFLAGS="`echo $with_curses/lib | sed "$LRscript"` $CURSLDFLAGS"
 		CURSCPPFLAGS="-I$with_curses/include $CURSCPPFLAGS"
 	else
-	    if test "$vi_cv_widechar" = "yes"; then
-		CURSCPPFLAGS=$($PKG_CONFIG --cflags ncursesw)
-		CURLSLIBS=$($PKG_CONFIG --libs ncursesw)
-	    else
-		CURSCPPFLAGS=$($PKG_CONFIG --cflags ncurses)
-		CURLSLIBS=$($PKG_CONFIG --libs ncurses)
-	    fi
+	    CURSCPPFLAGS=$($PKG_CONFIG --cflags ncursesw)
+	    CURLSLIBS=$($PKG_CONFIG --libs ncursesw)
 	    if test $? != 0; then
 		vi_cv_curses=unknown
 	    else
@@ -330,17 +315,10 @@ dnl 	[
 	CPPFLAGS="$CURSCPPFLAGS $CPPFLAGS"
 
 	if test "$vi_cv_curses" != "unknown"; then
-	    if test "$vi_cv_widechar" = "yes"; then
-		for vi_cv_curses in ncurses ncursesw curses; do
-		    AC_CHECK_LIB($vi_cv_curses, waddnwstr,[break])
-		    vi_cv_curses=unknown
-		done
-	    else
-		for vi_cv_curses in ncurses ncursesw curses; do
-		    AC_CHECK_LIB($vi_cv_curses, initscr, [break])
-		    vi_cv_curses=unknown
-		done
-	    fi
+	    for vi_cv_curses in ncurses ncursesw curses; do
+	       AC_CHECK_LIB($vi_cv_curses, waddnwstr,[break])
+	       vi_cv_curses=unknown
+	    done
 
 	    if test "$vi_cv_curses" != "unknown"; then
 		CURSHEADER=curses.h

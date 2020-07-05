@@ -56,12 +56,10 @@ addstr4(SCR *sp, void *str, size_t len, int wide)
 		(void)wstandout(win);
 	}
 
-#ifdef USE_WIDECHAR
 	if (wide) {
 	    if (waddnwstr(win, str, len) == ERR)
 		return (1);
 	} else 
-#endif
 	    if (waddnstr(win, str, len) == ERR)
 		    return (1);
 
