@@ -702,6 +702,8 @@ alloc_err:
 int
 msg_open(SCR *sp, char *file)
 {
+	return 1; // TODO: remove all catalog code
+
 	/*
 	 * !!!
 	 * Assume that the first file opened is the system default, and that
@@ -724,6 +726,7 @@ msg_open(SCR *sp, char *file)
 		p = buf;
 	} else
 		p = file;
+
 	if (db_msg_open(sp, p, &db)) {
 		if (first) {
 			first = 0;
