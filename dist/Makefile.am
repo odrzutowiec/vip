@@ -2,8 +2,6 @@ visrcdir= @srcdir@/..
 
 ACLOCAL_AMFLAGS = -I m4
 
-    DB_C = $(visrcdir)/common/vi_db.c
-
 lib_LTLIBRARIES = libvi.la
 libvi_la_SOURCES = \
 	$(visrcdir)/common/api.c \
@@ -85,7 +83,7 @@ libvi_la_SOURCES = \
 	$(visrcdir)/vi/vi.h \
 	$(visrcdir)/common/gs.c \
 	$(visrcdir)/common/key.c \
-	$(DB_C) \
+	$(visrcdir)/common/vi_db.c \
 	$(visrcdir)/common/main.c \
 	$(visrcdir)/common/mark.c \
 	$(visrcdir)/common/msg.c \
@@ -140,7 +138,6 @@ libvi_la_SOURCES = \
 	$(visrcdir)/vi/vs_split.c
 EXTRA_libvi_la_SOURCES = \
 	$(visrcdir)/common/vi_db.c \
-	$(visrcdir)/common/vi_db1.c \
 	$(visrcdir)/common/dldb.c \
 	$(visrcdir)/common/log.c \
 	$(visrcdir)/common/log1.c \

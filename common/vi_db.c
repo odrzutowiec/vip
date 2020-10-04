@@ -163,7 +163,7 @@ retry:
 	memset(&data, 0, sizeof(data));
 	data.data = sp->c_lp;
 	data.ulen = sp->c_blen;
-	data.flags = DB_DBT_USERMEM;
+	data.flags = DB_DBT_USERMEM; // TODO: fixes BDB0630 DB_THREAD mandates memory allocation flag on key DBT
 	switch (ep->db->get(ep->db, NULL, &key, &data, 0)) {
 	case DB_BUFFER_SMALL:
 		nlen = data.size;
@@ -302,6 +302,7 @@ append(SCR *sp, db_recno_t lno, CHAR_T *p, size_t len, lnop_t op, int update)
 	memset(&key, 0, sizeof(key));
 	key.data = &lno;
 	key.size = sizeof(lno);
+	key.flags = DB_DBT_MALLOC; // TODO: fixes BDB0063 DB_BUFFER_SMALL: User memory too small for return value
 	memset(&data, 0, sizeof(data));
 
 	if ((sp->db_error = ep->db->cursor(ep->db, NULL, &dbcp_put, 0)) != 0)
