@@ -258,6 +258,7 @@ static OABBREV const abbrev[] = {
 	{L("ic"),	O_IGNORECASE},		/*     4BSD */
 	{L("ie"),	O_INPUTENCODING},
 	{L("li"),	O_LINES},		/*   4.4BSD */
+	{L("lr"),	O_LEFTRIGHT},		/*     vip */
 	{L("modelines"),	O_MODELINE},		/*     HPUX */
 	{L("nu"),	O_NUMBER},		/*     4BSD */
 	{L("opt"),	O_OPTIMIZE},		/*     4BSD */
