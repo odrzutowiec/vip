@@ -616,7 +616,7 @@ cl_rdiv(SCR *sp)
 
 	for (cnt = 0; cnt < sp->rows - 1; ++cnt) {
 		wmove(stdscr, sp->roff + cnt, sp->cols + sp->coff);
-		waddch(stdscr, '|');
+		wadd_wch(stdscr, WACS_VLINE);
 	}
 }
 
