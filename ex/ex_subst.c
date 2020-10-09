@@ -550,8 +550,13 @@ noargs:	if (F_ISSET(sp, SC_VI) && sp->c_suffix && (lflag || nflag || pflag)) {
 nextmatch:	match[0].rm_so = 0;
 		match[0].rm_eo = len;
 
+		/* Emulating REG_STARTEND - get a line slice based on match[0] range */
+		int tmp_rm_so = match[0].rm_so;
+		int tmp_rm_eo = match[0].rm_eo;
+		CHAR_T *temp_s = v_wstrdup(sp, s + offset + tmp_rm_so, tmp_rm_eo);
+
 		/* Get the next match. */
-		eval = regwexec(re, s + offset, 10, match, eflags);
+		eval = regwexec(re, temp_s, 10, match, eflags);
 
 		/*
 		 * There wasn't a match or if there was an error, deal with
