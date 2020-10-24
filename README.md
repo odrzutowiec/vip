@@ -16,6 +16,7 @@ What *will* distinguish VIP is it's extremly simple and powerful plugin system b
 - [x] remove gtk, motif, perl, ipc and docs
 - [x] remove included db3 and regexp source coude, use libs instead
 - [x] add support for widechars
+- [ ] visual selection mode
 - [ ] clean up unused build flags and related code
 - [ ] clean up build system
 - [ ] update code to C18
