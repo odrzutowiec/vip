@@ -18,7 +18,7 @@ What *will* distinguish VIP is it's extremly simple and powerful plugin system b
 - [x] add support for widechars
 - [ ] visual selection mode
 - [ ] clean up unused build flags and related code
-- [ ] clean up build system
+- [ ] change build system to plain a makefile
 - [ ] update code to C18
 - [ ] pipe based plugin system
 
@@ -30,3 +30,4 @@ What *will* distinguish VIP is it's extremly simple and powerful plugin system b
 1. Align text command/motion moving a part of line to the center, left, rigt, before first char, after last char
 1. Display first line with smaller indentation above screen until no text with no identation
 1. "c-2t)", a "-" count for motions to count from the end (also "+" to make it consistant)
+1. Temporarly commit the configure script until the build system is converted to plain makefile
