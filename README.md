@@ -1,6 +1,6 @@
 # VIP
 
-Vi by Pyzozord (my IRC nickname), Very Important Program, Vi with Plugins, Vi Perfected.
+Very Important Program, Vi with Plugins, Vi Perfected.
 
 VIP is my custom editor derived from [nex/nvi 1.80](https://repo.or.cz/nvi.git) aiming at editing efficiency and execution perfomance and tries to follow [suckless philosopy](https://suckless.org/philosophy/).
 
