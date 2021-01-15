@@ -7,7 +7,7 @@ VIP is my custom editor derived from [nex/nvi 1.80](https://repo.or.cz/nvi.git) 
 What *will* distinguish VIP is it's extremly simple and powerful plugin system based on unix pipelines and JSON format allowing for pipes to be written in any programming language capable of reading JSON text from stdin and producing JSON text on stdout.
 
 ### How to
-1. apt-get install libdb-dev libtre-dev autotools-dev libtool
+1. apt-get install libncursesw5-dev libdb-dev libtre-dev autotools-dev libtool
 1. Navigate to ./build.me/
 1. Run ./build.sh
 
