@@ -193,6 +193,8 @@ OPTLIST const optlist[] = {
  *	and we ignore the option.
  */
 	{L("sourceany"),	NULL,		OPT_0BOOL,	OPT_NOSET},
+/* O_SPACETABS	    4BSD  */
+	{L("spacetabs"),	NULL,		OPT_0BOOL,	0},
 /* O_TABSTOP	    4BSD */
 	{L("tabstop"),	f_reformat,	OPT_NUM,	OPT_NOZERO},
 /* O_TAGLENGTH	    4BSD */
@@ -271,6 +273,7 @@ static OABBREV const abbrev[] = {
 	{L("slow"),	O_SLOWOPEN},		/*     4BSD */
 	{L("sm"),	O_SHOWMATCH},		/*     4BSD */
 	{L("smd"),	O_SHOWMODE},		/*     4BSD */
+	{L("st"),	O_SPACETABS},		/*     4BSD */
 	{L("sw"),	O_SHIFTWIDTH},		/*     4BSD */
 	{L("tag"),	O_TAGS},		/*     4BSD (undocumented) */
 	{L("tl"),	O_TAGLENGTH},		/*     4BSD */

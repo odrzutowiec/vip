@@ -1679,7 +1679,7 @@ static void
 txt_ai_resolve(SCR *sp, TEXT *tp, int *changedp)
 {
 	u_long ts;
-	int del;
+	int del, st;
 	size_t cno, len, new, old, scno, spaces, tab_after_sp, tabs;
 	CHAR_T *p;
 
@@ -1720,17 +1720,28 @@ txt_ai_resolve(SCR *sp, TEXT *tp, int *changedp)
 			++scno;
 		}
 
-	/*
-	 * If there are no spaces, or no tabs after spaces and less than
-	 * ts spaces, it's already minimal.
-	 */
-	if (!spaces || !tab_after_sp && spaces < ts)
-		return;
 
 	/* Count up spaces/tabs needed to get to the target. */
 	for (cno = 0, tabs = 0; cno + COL_OFF(cno, ts) <= scno; ++tabs)
 		cno += COL_OFF(cno, ts);
-	spaces = scno - cno;
+
+	/* But only if we are not expanding tabs to spaces with SPACETABS. */
+	st = O_VAL(sp, O_SPACETABS);
+	if (st) {
+		tabs = 0;
+		spaces = scno;
+	} else {
+		/*
+		 * If there are no spaces, or no tabs after spaces and less than
+		 * ts spaces, it's already minimal.
+		 */
+		if (!spaces || !tab_after_sp && spaces < ts)
+			return;
+
+		/* Recount spaces without tabs */
+		spaces = scno - cno;
+	}
+
 
 	/*
 	 * Figure out how many characters we're dropping -- if we're not
