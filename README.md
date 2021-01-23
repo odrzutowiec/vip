@@ -17,7 +17,7 @@ There is also something else you need in step 1, but I'm not sure what at the mo
 ### Implemented features
 1. Nicer vertical screen divider character.
 1. Added "lr" option shortcut for "leftright" option.
-1. Better support for indentation. Added "spacetabs" (shorthand "st") option. It makes the insert mode ^t and normal mode >> generate [tabstop] of spaces instead of a tab character.
+1. Better support for indentation. Added "spacetabs" (shorthand "st") option. It makes the insert mode <tab>, ^t and normal mode >> generate [tabstop] of spaces instead of a tab character.
 1. Nicer horizontal message divider character.
 
 ### Ideas for features
