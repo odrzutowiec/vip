@@ -10,15 +10,18 @@ What *will* distinguish VIP is it's extremly simple and powerful plugin system b
 1. apt-get install libncursesw5-dev libdb-dev libtre-dev autotools-dev libtool
 1. Navigate to ./build.me/
 1. Run ./build.sh
+1. (optional) sudo ./deploy.sh
 
 There is also something else you need in step 1, but I'm not sure what at the moment. You can figure it out from the errors in step 3.
 
 ### Implemented features
+1. Nicer vertical screen divider character.
 1. Added "lr" option shortcut for "leftright" option.
 1. Better support for indentation. Added "spacetabs" (shorthand "st") option. It makes the insert mode ^t and normal mode >> generate [tabstop] of spaces instead of a tab character.
+1. Nicer horizontal message divider character.
 
 ### Ideas for features
-1. Vi commands n and N always go the same direction regardless of / or ? search direction.
+1. Make ^A work like ^a but in reverse.
 1. Readline for : and / commands.
 1. Break-wrap inserting new line characters (and autoindenting) next line.
 1. Align text command/motion moving a part of line to the center, left, rigt, before first char, after last char.
@@ -26,6 +29,7 @@ There is also something else you need in step 1, but I'm not sure what at the mo
 1. "c-2t)", a "-" count for motions to count from the end (also "+" to make it consistant).
 1. Visual selection mode.
 1. Support for .viprc config file name.
+1. Add structural regular expressions
 
 ### Technical roadmap
 1. [x] Clone nex/nvi.
