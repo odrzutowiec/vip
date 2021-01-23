@@ -855,11 +855,11 @@ vs_divider(SCR *sp)
 	GS *gp;
 	size_t len;
 
-#define	DIVIDESTR	"+=+=+=+=+=+=+=+"
+#define	DIVIDESTR	"────────"
 	len =
 	    sizeof(DIVIDESTR) - 1 > sp->cols ? sp->cols : sizeof(DIVIDESTR) - 1;
 	gp = sp->gp;
-	(void)gp->scr_attr(sp, SA_INVERSE, 1);
+	//(void)gp->scr_attr(sp, SA_INVERSE, 1);
 	(void)gp->scr_addstr(sp, DIVIDESTR, len);
 	(void)gp->scr_attr(sp, SA_INVERSE, 0);
 }
