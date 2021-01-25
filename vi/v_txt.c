@@ -281,8 +281,6 @@ v_txt(SCR *sp, VICMD *vp, MARK *tm, const CHAR_T *lp, size_t len, ARG_CHAR_T pro
 	gp = sp->gp;
 	vip = VIP(sp);
 
-	int st = O_VAL(sp, O_SPACETABS);
-
 	/*
 	 * Set the input flag, so tabs get displayed correctly
 	 * and everyone knows that the text buffer is in use.
@@ -361,10 +359,8 @@ newtp:		if ((tp = text_init(sp, lp, len, len + 32)) == NULL)
 		 * The cc and S commands have a special feature -- leading
 		 * <blank> characters are handled as autoindent characters.
 		 * Beauty!
-		 *
-		 * Also do autoindent if we are in the SPACETABS mode.
 		 */
-		if (st || LF_ISSET(TXT_AICHARS)) {
+		if (LF_ISSET(TXT_AICHARS)) {
 			tp->offset = 0;
 			tp->ai = tp->cno;
 		} else
@@ -1269,16 +1265,6 @@ ins_ch:		/*
 		 * <tab> or <ff>.
 		 */
 
-		/*
-		 * Trigger fake autoindentatio if we are doing SPACETABS.
-		 * This is done specifically to also convert <tab> characters
-		 * inserted at the beginning of the line. The txt_ai_resolve
-		 * will kick in and convert those tabs to spaces in this case.
-		 */
-		if (st) {
-			tp->ai = 1;
-		}
-
 		if (LF_ISSET(TXT_BEAUTIFY) && ISCNTRL(evp->e_c) &&
 		    evp->e_value != K_FORMFEED && evp->e_value != K_TAB) {
 			msgq(sp, M_BERR,
@@ -1694,18 +1680,23 @@ static void
 txt_ai_resolve(SCR *sp, TEXT *tp, int *changedp)
 {
 	u_long ts;
-	int del, st;
+	int del;
 	size_t cno, len, new, old, scno, spaces, tab_after_sp, tabs;
 	CHAR_T *p;
 
 	*changedp = 0;
 
 	/*
-	 * If the line is empty, has an offset, or no autoindent
-	 * characters, we're done.
-	 */
-	if (!tp->len || tp->offset || !tp->ai)
-		return;
+	* Don't return if we are in spacetabs mode
+	*/
+	if (!O_VAL(sp, O_SPACETABS)) {
+		/*
+		* If the line is empty, has an offset, or no autoindent
+		* characters, we're done.
+		*/
+		if (tp->len <= 1 || tp->offset || !tp->ai)
+			return;
+	}
 
 	/*
 	 * If the length is less than or equal to the autoindent
@@ -1741,8 +1732,7 @@ txt_ai_resolve(SCR *sp, TEXT *tp, int *changedp)
 		cno += COL_OFF(cno, ts);
 
 	/* But only if we are not expanding tabs to spaces with SPACETABS. */
-	st = O_VAL(sp, O_SPACETABS);
-	if (st) {
+	if (O_VAL(sp, O_SPACETABS)) {
 		tabs = 0;
 		spaces = scno;
 	} else {
