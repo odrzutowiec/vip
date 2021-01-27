@@ -865,5 +865,8 @@ fi
 dnl We compile in nvi's TRE regexp routines
 LIBS="-ltre $LIBS"
 
+dnl We compile in readline
+LIBS="-lreadline $LIBS"
+
 AC_OUTPUT(Makefile port.h:port.h.in compat.h:port.h.in
     pathnames.h:pathnames.h.in recover:recover.in)

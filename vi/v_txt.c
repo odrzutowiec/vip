@@ -27,6 +27,8 @@ static const char sccsid[] = "$Id: v_txt.c,v 10.108 2003/07/18 21:27:42 skimo Ex
 #include <string.h>
 #include <unistd.h>
 
+#include <readline/readline.h>
+
 #include "../common/common.h"
 #include "vi.h"
 
@@ -38,6 +40,7 @@ static int	 txt_emark __P((SCR *, TEXT *, size_t));
 static void	 txt_err __P((SCR *, TEXTH *));
 static int	 txt_fc __P((SCR *, TEXT *, int *));
 static int	 txt_fc_col __P((SCR *, int, ARGS **));
+static TEXT	*txt_get_tib __P((SCR *, size_t, CHAR_T *));
 static int	 txt_hex __P((SCR *, TEXT *));
 static int	 txt_insch __P((SCR *, TEXT *, CHAR_T *, u_int));
 static int	 txt_isrch __P((SCR *, VICMD *, TEXT *, u_int8_t *));
@@ -88,9 +91,23 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	if (O_ISSET(sp, O_TTYWERASE))
 		LF_SET(TXT_TTYWERASE);
 
+	/*
+	 * Get new text input buffer.
+	 */
+	F_SET(sp, SC_TINPUT);
+  TEXT *tp = txt_get_tib(sp, 0, NULL);
+  F_SET(sp, SC_EXIT_FORCE);
+  
 	/* Do the input thing. */
-	if (v_txt(sp, vp, NULL, NULL, 0, prompt, 0, 1, flags))
-		return (1);
+  /* if (v_txt(sp, vp, NULL, NULL, 0, prompt, 0, 1, flags))
+    return (1); */
+
+  char *input = readline(">>> ");
+  int r = sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->lb, tp->lb_len);
+
+  /*
+  wprintf("debug: \"%s\"", input);
+  */
 
 	/* Reenable the modeline updates. */
 	F_CLR(sp, SC_TINPUT_INFO);
@@ -256,7 +273,6 @@ v_txt(SCR *sp, VICMD *vp, MARK *tm, const CHAR_T *lp, size_t len, ARG_CHAR_T pro
 	TEXT *ntp, *tp;		/* Input text structures. */
 	TEXT ait;		/* Autoindent text structure. */
 	TEXT wmt;		/* Wrapmargin text structure. */
-	TEXTH *tiqh;
 	VI_PRIVATE *vip;
 	abb_t abb;		/* State of abbreviation checks. */
 	carat_t carat;		/* State of the "[^0]^D" sequences. */
@@ -286,39 +302,11 @@ v_txt(SCR *sp, VICMD *vp, MARK *tm, const CHAR_T *lp, size_t len, ARG_CHAR_T pro
 	 * and everyone knows that the text buffer is in use.
 	 */
 	F_SET(sp, SC_TINPUT);
-
+	
 	/*
-	 * Get one TEXT structure with some initial buffer space, reusing
-	 * the last one if it's big enough.  (All TEXT bookkeeping fields
-	 * default to 0 -- text_init() handles this.)  If changing a line,
-	 * copy it into the TEXT buffer.
+	 * Get new text input buffer.
 	 */
-	tiqh = &sp->tiq;
-	if (tiqh->cqh_first != (void *)tiqh) {
-		tp = tiqh->cqh_first;
-		if (tp->q.cqe_next != (void *)tiqh || tp->lb_len < len + 32) {
-			text_lfree(tiqh);
-			goto newtp;
-		}
-		tp->ai = tp->insert = tp->offset = tp->owrite = 0;
-		if (lp != NULL) {
-			tp->len = len;
-			BINC_RETW(sp, tp->lb, tp->lb_len, len);
-			MEMMOVEW(tp->lb, lp, len);
-		} else
-			tp->len = 0;
-	} else {
-newtp:		if ((tp = text_init(sp, lp, len, len + 32)) == NULL)
-			return (1);
-		CIRCLEQ_INSERT_HEAD(tiqh, tp, q);
-	}
-
-	/* Set default termination condition. */
-	tp->term = TERM_OK;
-
-	/* Set the starting line, column. */
-	tp->lno = sp->lno;
-	tp->cno = sp->cno;
+	tp = txt_get_tib(sp, len, lp);
 
 	/*
 	 * Set the insert and overwrite counts.  If overwriting characters,
@@ -2418,6 +2406,52 @@ nothex:		tp->lb[tp->cno] = savec;
 		    tp->insert);
 
 	return (0);
+}
+
+/*
+ * txt_get_tib --
+ *  Get text input biffer.
+ */
+static TEXT *
+txt_get_tib(SCR *sp, size_t len, CHAR_T *lp)
+{
+	TEXTH *tiqh;
+	TEXT *tp;		/* Input text structures. */
+
+	/*
+	 * Get one TEXT structure with some initial buffer space, reusing
+	 * the last one if it's big enough.  (All TEXT bookkeeping fields
+	 * default to 0 -- text_init() handles this.)  If changing a line,
+	 * copy it into the TEXT buffer.
+	 */
+	tiqh = &sp->tiq;
+	if (tiqh->cqh_first != (void *)tiqh) {
+		tp = tiqh->cqh_first;
+		if (tp->q.cqe_next != (void *)tiqh || tp->lb_len < len + 32) {
+			text_lfree(tiqh);
+			goto newtp;
+		}
+		tp->ai = tp->insert = tp->offset = tp->owrite = 0;
+		if (lp != NULL) {
+			tp->len = len;
+			BINC_RETW(sp, tp->lb, tp->lb_len, len);
+			MEMMOVEW(tp->lb, lp, len);
+		} else
+			tp->len = 0;
+	} else {
+newtp:		if ((tp = text_init(sp, lp, len, len + 32)) == NULL)
+			return (1);
+		CIRCLEQ_INSERT_HEAD(tiqh, tp, q);
+	}
+
+	/* Set default termination condition. */
+	tp->term = TERM_OK;
+
+	/* Set the starting line, column. */
+	tp->lno = sp->lno;
+	tp->cno = sp->cno;
+
+  return tp;
 }
 
 /*
