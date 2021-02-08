@@ -101,9 +101,8 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	rl_prep_terminal(0);
 	rl_tty_set_echoing(1);
 
-	/* Move cursor to the last line */
-	wmove(stdscr, 0, 0);
-	wrefresh(stdscr);
+	/* Refresh the screen, update the cursor position */
+	vs_refresh(sp, 1);
 	
 	/* Do the input thing. */
 	char *input = readline((char []){prompt, ' ', 0});
