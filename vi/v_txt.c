@@ -91,29 +91,26 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 		LF_SET(TXT_ALTWERASE);
 	if (O_ISSET(sp, O_TTYWERASE))
 		LF_SET(TXT_TTYWERASE);
-
-	/*
-	 * Get new text input buffer.
-	 */
-	F_SET(sp, SC_TINPUT);
-	TEXT *tp = txt_get_tib(sp, 0, NULL);
-	// TODO: why this can't be here F_SET(sp, SC_EXIT_FORCE);
-
-	/* Do the input thing. */
 	
-	/* 
-	if (v_txt(sp, vp, NULL, NULL, 0, prompt, 0, 1, flags))
-		return (1);
-	*/
-
-	clrtoeol();
-	wrefresh(stdscr);
+	/* Get new text input buffer. */
+	TEXT *tp = txt_get_tib(sp, 0, NULL);
+	
+	/* Reset readline settings */
+	// TODO: move this into a better place, something changes the terminal
+	// options each time...
 	rl_prep_terminal(0);
 	rl_tty_set_echoing(1);
+
+	/* Move cursor to the last line */
 	wmove(stdscr, 0, 0);
 	wrefresh(stdscr);
-	char *input = readline(">>> ");
-	int r = sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb);
+	
+	/* Do the input thing. */
+	char *input = readline((char []){prompt, ' ', 0});
+	
+	/* Convert and store readline input in tp. */
+	if (sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb))
+		return (1);
 
 	/* Reenable the modeline updates. */
 	F_CLR(sp, SC_TINPUT_INFO);
@@ -2457,7 +2454,7 @@ newtp:		if ((tp = text_init(sp, lp, len, len + 32)) == NULL)
 	tp->lno = sp->lno;
 	tp->cno = sp->cno;
 
-  return tp;
+	return tp;
 }
 
 /*
