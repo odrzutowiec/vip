@@ -27,6 +27,7 @@ static const char sccsid[] = "$Id: v_txt.c,v 10.108 2003/07/18 21:27:42 skimo Ex
 #include <string.h>
 #include <unistd.h>
 
+#include <ncursesw/ncurses.h>
 #include <readline/readline.h>
 
 #include "../common/common.h"
@@ -95,19 +96,24 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	 * Get new text input buffer.
 	 */
 	F_SET(sp, SC_TINPUT);
-  TEXT *tp = txt_get_tib(sp, 0, NULL);
-  F_SET(sp, SC_EXIT_FORCE);
-  
+	TEXT *tp = txt_get_tib(sp, 0, NULL);
+	// TODO: why this can't be here F_SET(sp, SC_EXIT_FORCE);
+
 	/* Do the input thing. */
-  /* if (v_txt(sp, vp, NULL, NULL, 0, prompt, 0, 1, flags))
-    return (1); */
+	
+	/* 
+	if (v_txt(sp, vp, NULL, NULL, 0, prompt, 0, 1, flags))
+		return (1);
+	*/
 
-  char *input = readline(">>> ");
-  int r = sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->lb, tp->lb_len);
-
-  /*
-  wprintf("debug: \"%s\"", input);
-  */
+	clrtoeol();
+	wrefresh(stdscr);
+	rl_prep_terminal(0);
+	rl_tty_set_echoing(1);
+	wmove(stdscr, 0, 0);
+	wrefresh(stdscr);
+	char *input = readline(">>> ");
+	int r = sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb);
 
 	/* Reenable the modeline updates. */
 	F_CLR(sp, SC_TINPUT_INFO);
