@@ -69,6 +69,8 @@ static void	 txt_unmap __P((SCR *, TEXT *, u_int32_t *));
 int
 v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 {
+	EVENT ev; 		/* Current event. */
+
 	/* Normally, we end up where we started. */
 	vp->m_final.lno = sp->lno;
 	vp->m_final.cno = sp->cno;
@@ -94,18 +96,25 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	
 	/* Get new text input buffer. */
 	TEXT *tp = txt_get_tib(sp, 0, NULL);
+
+	/* Refresh the screen, update the cursor position */
+	vs_refresh(sp, 1);
+
+	/* Get an event. */
+	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
+		return (1);
 	
+	/* Put the character from the event inside readline input. */
+	rl_stuff_char(ev.e_c);
+
 	/* Reset readline settings */
 	// TODO: move this into a better place, something changes the terminal
 	// options each time...
 	rl_prep_terminal(0);
 	rl_tty_set_echoing(1);
 
-	/* Refresh the screen, update the cursor position */
-	vs_refresh(sp, 1);
-	
 	/* Do the input thing. */
-	char *input = readline((char []){prompt, ' ', 0});
+	char *input = readline((char []){prompt, 0});
 	
 	/* Convert and store readline input in tp. */
 	if (sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb))

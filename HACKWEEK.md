@@ -8,7 +8,8 @@
 2. ✅ bug: it exists after a command
 3. ✅ bug: it doesn't show text typed in the readline
 4. ✅ bug: it shows the readline prompt at the wrong place
-5. bug: it "eats" one key stroke if you don't wait for it to show up
+5. ✅ bug: it "eats" one key stroke if you don't wait for it to show up
+5. bug: it always waits for secound keystroke before showing prompt
 6. bug: it doesn't clear screen properly after entering the command
 7. feature: support for command history and cedit option
 8. feature: support for file completion and filec option
