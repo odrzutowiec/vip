@@ -97,22 +97,32 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	/* Get new text input buffer. */
 	TEXT *tp = txt_get_tib(sp, 0, NULL);
 
-	/* Refresh the screen, update the cursor position */
+	/* Refresh the screen, update the cursor position. */
 	vs_refresh(sp, 1);
-
-	/* Get an event. */
-	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
-		return (1);
-	
-	/* Put the character from the event inside readline input. */
-	rl_stuff_char(ev.e_c);
 
 	/* Reset readline settings */
 	// TODO: move this into a better place, something changes the terminal
 	// options each time...
 	rl_prep_terminal(0);
 	rl_tty_set_echoing(1);
+	
+	/* Print readline prompt preemptively. */
+	rl_initialize();
+	rl_set_prompt((char []){prompt, 0});
+	rl_redisplay();
 
+	/* Get an event. */
+	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
+		return (1);
+	
+	/* Put the character from the event inside readline input. */
+	if (ev.e_event == E_CHARACTER) {
+		rl_stuff_char(ev.e_c);
+	}
+
+	/* Clear the fake readline prompt. */
+	rl_clear_visible_line();
+	
 	/* Do the input thing. */
 	char *input = readline((char []){prompt, 0});
 	
