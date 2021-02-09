@@ -9,7 +9,9 @@
 3. ✅ bug: it doesn't show text typed in the readline
 4. ✅ bug: it shows the readline prompt at the wrong place
 5. ✅ bug: it "eats" one key stroke if you don't wait for it to show up
-5. ✅ bug: it always waits for secound keystroke before showing prompt
-6. bug: it doesn't clear screen properly after entering the command
-7. feature: support for command history and cedit option
-8. feature: support for file completion and filec option
+6. ✅ bug: it always waits for secound keystroke before showing prompt
+7. ✅ bug: somtimes letters from the file buffer get confused with the :command
+8. bug: it doesn't clear screen properly after entering the command
+9. feature: support for exiting :command mode with esc, ctrl-c and backspace
+10. feature: support for command history and cedit option
+11. feature: support for file completion and filec option

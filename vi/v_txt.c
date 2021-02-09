@@ -98,13 +98,15 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	TEXT *tp = txt_get_tib(sp, 0, NULL);
 
 	/* Refresh the screen, update the cursor position. */
-	vs_refresh(sp, 1);
+	if (vs_refresh(sp, 1))
+		return (1);
 
 	/* Reset readline settings */
 	// TODO: move this into a better place, something changes the terminal
 	// options each time...
 	rl_prep_terminal(0);
 	rl_tty_set_echoing(1);
+	rl_catch_signals = 0;
 	
 	/* Print readline prompt preemptively. */
 	rl_initialize();
@@ -126,9 +128,8 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	/* Do the input thing. */
 	char *input = readline((char []){prompt, 0});
 	
-	/* Convert and store readline input in tp. */
-	if (sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb))
-		return (1);
+	/* Clean up readline terminal settings */
+	rl_deprep_terminal();
 
 	/* Reenable the modeline updates. */
 	F_CLR(sp, SC_TINPUT_INFO);
@@ -137,12 +138,20 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	if (txt_map_end(sp))
 		return (1);
 
-	if (IS_ONELINE(sp))
-		F_SET(sp, SC_SCR_REDRAW);	/* XXX */
+	/* Repaint everything */
+	F_SET(sp, SC_SCR_REDRAW);
 
 	/* Set the cursor to the resulting position. */
 	sp->lno = vp->m_final.lno;
 	sp->cno = vp->m_final.cno;
+
+	/* Refresh the screen, update the cursor position. */
+	if (vs_refresh(sp, 1))
+		return (1);
+	
+	/* Convert and store readline input in tp. */
+	if (sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb))
+		return (1);
 
 	return (0);
 }
