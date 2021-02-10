@@ -29,7 +29,7 @@ static const char sccsid[] = "$Id: v_txt.c,v 10.108 2003/07/18 21:27:42 skimo Ex
 
 #include <ncursesw/ncurses.h>
 #include <readline/readline.h>
-
+ 
 #include "../common/common.h"
 #include "vi.h"
 
@@ -61,6 +61,39 @@ static void	 txt_unmap __P((SCR *, TEXT *, u_int32_t *));
 #endif
 
 /*
+ * If doing input mapping on the colon command line, may need to unmap
+ * based on the command.
+ */
+#define	UNMAP_TST							\
+	FL_ISSET(ec_flags, EC_MAPINPUT) && LF_ISSET(TXT_INFOLINE)
+
+/* 
+ * Internally, we maintain tp->lno and tp->cno, externally, everyone uses
+ * sp->lno and sp->cno.  Make them consistent as necessary.
+ */
+#define	UPDATE_POSITION(sp, tp) {					\
+	(sp)->lno = (tp)->lno;						\
+	(sp)->cno = (tp)->cno;						\
+}
+
+SCR *v_tcmd_sp;
+TEXT *v_tcmd_tp;
+
+void
+v_tcmd_print(void)
+{
+	SCR *sp = v_tcmd_sp;
+	TEXT *tp = v_tcmd_tp;
+	
+	if (sp->conv.input2int(sp, rl_line_buffer, strlen(rl_line_buffer), &sp->wp->cw, &tp->len, &tp->lb))
+		return (1);
+	
+	vs_change(sp, tp->lno, LINE_RESET);
+	if (vs_refresh(sp, 1))
+		return (1);
+}
+
+/*
  * v_tcmd --
  *	Fill a buffer from the terminal for vi.
  *
@@ -69,6 +102,7 @@ static void	 txt_unmap __P((SCR *, TEXT *, u_int32_t *));
 int
 v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 {
+
 	EVENT ev; 		/* Current event. */
 
 	/* Normally, we end up where we started. */
@@ -84,6 +118,7 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	sp->cno = 0;
 
 	/* Don't update the modeline for now. */
+	F_SET(sp, SC_TINPUT);
 	F_SET(sp, SC_TINPUT_INFO);
 
 	/* Set the input flags. */
@@ -102,16 +137,22 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 		return (1);
 
 	/* Reset readline settings */
-	// TODO: move this into a better place, something changes the terminal
-	// options each time...
-	rl_prep_terminal(0);
-	rl_tty_set_echoing(1);
+	// TODO: disable prep and deprep
 	rl_catch_signals = 0;
 	
-	/* Print readline prompt preemptively. */
-	rl_initialize();
-	rl_set_prompt((char []){prompt, 0});
-	rl_redisplay();
+	/*
+	 * Use custom function to render readline. Rendering works weird.
+	 * It will store the wide string in the tp and then refresh the screen.
+	 * Incidentally that tp is exactly the same one that will be used
+	 * up the callstack for executing the command.
+	 */
+	rl_redisplay_function = v_tcmd_print;
+	
+	/* Save screen pointer for the render function. */
+	v_tcmd_sp = sp;
+	
+	/* Save text pointer for the render function. */
+	v_tcmd_tp = tp;
 
 	/* Get an event. */
 	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
@@ -121,37 +162,21 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	if (ev.e_event == E_CHARACTER) {
 		rl_stuff_char(ev.e_c);
 	}
-
-	/* Clear the fake readline prompt. */
-	rl_clear_visible_line();
 	
 	/* Do the input thing. */
 	char *input = readline((char []){prompt, 0});
-	
-	/* Clean up readline terminal settings */
-	rl_deprep_terminal();
 
 	/* Reenable the modeline updates. */
+	F_CLR(sp, SC_TINPUT);
 	F_CLR(sp, SC_TINPUT_INFO);
 
 	/* Clean up the map. */
 	if (txt_map_end(sp))
 		return (1);
 
-	/* Repaint everything */
-	F_SET(sp, SC_SCR_REDRAW);
-
 	/* Set the cursor to the resulting position. */
 	sp->lno = vp->m_final.lno;
 	sp->cno = vp->m_final.cno;
-
-	/* Refresh the screen, update the cursor position. */
-	if (vs_refresh(sp, 1))
-		return (1);
-	
-	/* Convert and store readline input in tp. */
-	if (sp->conv.input2int(sp, input, strlen(input), &sp->wp->cw, &tp->len, &tp->lb))
-		return (1);
 
 	return (0);
 }
@@ -260,22 +285,6 @@ txt_map_end(SCR *sp)
 	F_SET(vip, VIP_CUR_INVALID);
 
 	return (0);
-}
-
-/*
- * If doing input mapping on the colon command line, may need to unmap
- * based on the command.
- */
-#define	UNMAP_TST							\
-	FL_ISSET(ec_flags, EC_MAPINPUT) && LF_ISSET(TXT_INFOLINE)
-
-/* 
- * Internally, we maintain tp->lno and tp->cno, externally, everyone uses
- * sp->lno and sp->cno.  Make them consistent as necessary.
- */
-#define	UPDATE_POSITION(sp, tp) {					\
-	(sp)->lno = (tp)->lno;						\
-	(sp)->cno = (tp)->cno;						\
 }
 
 /*

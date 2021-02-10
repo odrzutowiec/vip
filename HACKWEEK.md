@@ -11,7 +11,9 @@
 5. ✅ bug: it "eats" one key stroke if you don't wait for it to show up
 6. ✅ bug: it always waits for secound keystroke before showing prompt
 7. ✅ bug: somtimes letters from the file buffer get confused with the :command
-8. bug: it doesn't clear screen properly after entering the command
-9. feature: support for exiting :command mode with esc, ctrl-c and backspace
-10. feature: support for command history and cedit option
-11. feature: support for file completion and filec option
+8. ✅ bug: it doesn't clear screen properly after entering the command
+9. bug: the cursor is not updating
+10. bug: prompt is missing
+11. feature: support for exiting :command mode with esc, ctrl-c and backspace
+12. feature: support for command history and cedit option
+13. feature: support for file completion and filec option
