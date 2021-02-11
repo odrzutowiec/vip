@@ -88,7 +88,6 @@ v_tcmd_getc(FILE *dummy)
 	/* Fake stop by clearing readline buffer and sending enter */
 	if (
 		ev.e_event == E_INTERRUPT ||
-		ev.e_value == K_ESCAPE ||
 		(ev.e_value == K_VERASE && rl_end == 0)
 	) {
 		rl_replace_line("", 0);

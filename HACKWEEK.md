@@ -16,7 +16,8 @@
 10. ✅ bug: prompt is missing
 11. ✅ bug: search doesn't work
 12. ✅ bug: support for exiting :command mode with esc, ctrl-c and backspace
-13. ✅ feature: support for command history
-14. feature: support for cedit option
-15. feature: support for file completion and filec option
-16. ✅ feature: support for ^V
+13. bug: esc can't be used because then meta keys don't work
+14. ✅ feature: support for command history
+15. feature: support for cedit option
+16. feature: support for file completion and filec option
+17. ✅ feature: support for ^V
