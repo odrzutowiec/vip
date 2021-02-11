@@ -207,7 +207,10 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	v_tcmd_tp = tp;
 
 	/* Do the input thing. */
-	readline((char []){prompt, 0});
+	char *input = readline((char []){prompt, 0});
+	
+	/* Log readline history */
+	add_history(input);
 
 	// TODO: copy readline return to tp->lb instead of relaying on v_tcmd_print
 
