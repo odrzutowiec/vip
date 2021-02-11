@@ -83,14 +83,43 @@ int
 v_tcmd_getc(FILE *dummy)
 {
 	EVENT ev;
+	int stop = 0;
+	SCR *sp = v_tcmd_sp;
+	TEXT *tp = v_tcmd_tp;
+
 	v_event_get(v_tcmd_sp, &ev, 0, EC_MAPINPUT);
 
-	/* Fake stop by clearing readline buffer and sending enter */
+	int cedit, filec;
+	cedit = filec = 0;
+
+	if (O_STR(sp, O_CEDIT) != NULL &&
+	    O_STR(sp, O_CEDIT)[0] == ev.e_c)
+		cedit = 1;
+
+	if (O_STR(sp, O_FILEC) != NULL &&
+	    O_STR(sp, O_FILEC)[0] == ev.e_c)
+		filec = 1;
+
+	if (cedit == 1 && (filec == 0 || tp->cno == tp->offset)) {
+		tp->term = TERM_CEDIT;
+		stop = 1;
+	}
+
+	else if (filec == 1) {
+		// TODO: if (txt_fc(sp, tp, &filec_redraw)) goto err;
+		stop = 1;
+	}
+
 	if (
 		ev.e_event == E_INTERRUPT ||
 		(ev.e_value == K_VERASE && rl_end == 0)
 	) {
 		rl_replace_line("", 0);
+		stop = 1;
+	}
+
+	/* Fake stop by clearing readline buffer and sending enter */
+	if (stop) {
 		rl_free_line_state();
 		rl_callback_sigcleanup();
 		return 13;
