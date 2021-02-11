@@ -79,6 +79,27 @@ static void	 txt_unmap __P((SCR *, TEXT *, u_int32_t *));
 SCR *v_tcmd_sp;
 TEXT *v_tcmd_tp;
 
+int
+v_tcmd_getc(FILE *dummy)
+{
+	EVENT ev;
+	v_event_get(v_tcmd_sp, &ev, 0, EC_MAPINPUT);
+
+	/* Fake stop by clearing readline buffer and sending enter */
+	if (
+		ev.e_event == E_INTERRUPT ||
+		ev.e_value == K_ESCAPE ||
+		(ev.e_value == K_VERASE && rl_end == 0)
+	) {
+		rl_replace_line("", 0);
+		rl_free_line_state();
+		rl_callback_sigcleanup();
+		return 13;
+	}
+
+	return ev.e_c;
+}
+
 void
 v_tcmd_print(void)
 {
@@ -128,9 +149,6 @@ v_tcmd_print(void)
 int
 v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 {
-
-	EVENT ev; 		/* Current event. */
-
 	/* Normally, we end up where we started. */
 	vp->m_final.lno = sp->lno;
 	vp->m_final.cno = sp->cno;
@@ -154,7 +172,7 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 		LF_SET(TXT_ALTWERASE);
 	if (O_ISSET(sp, O_TTYWERASE))
 		LF_SET(TXT_TTYWERASE);
-	
+
 	/* Get new text input buffer. */
 	TEXT *tp = txt_get_tib(sp, 0, NULL);
 
@@ -163,11 +181,11 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 		return (1);
 
 	/* Reset readline settings */
-	// TODO: disable prep and deprep
 	rl_catch_signals = 0;
-	rl_set_prompt((char []){prompt, 0});
-	if (rl_line_buffer) rl_line_buffer[0] = 0;
-	
+	rl_change_environment = 0;
+	rl_prep_term_function = 0;
+	rl_deprep_term_function = 0;
+
 	/*
 	 * Use custom function to render readline. Rendering works weird.
 	 * It will store the wide string in the tp and then refresh the screen.
@@ -176,24 +194,18 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	 */
 	rl_redisplay_function = v_tcmd_print;
 	
-	/* Save screen pointer for the render function. */
+	/* And use custom function to get input. */
+	rl_getc_function = v_tcmd_getc;
+
+	/* Clear readline buffer. */
+	if (rl_line_buffer) rl_line_buffer[0] = 0;
+
+	/* Save screen pointer for the custom functions. */
 	v_tcmd_sp = sp;
-	
-	/* Save text pointer for the render function. */
+
+	/* Save text pointer for the custom functions. */
 	v_tcmd_tp = tp;
 
-	/* Print the prompt. */
-	v_tcmd_print();
-
-	/* Get an event. */
-	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
-		return (1);
-	
-	/* Put the character from the event inside readline input. */
-	if (ev.e_event == E_CHARACTER) {
-		rl_stuff_char(ev.e_c);
-	}
-	
 	/* Do the input thing. */
 	readline((char []){prompt, 0});
 

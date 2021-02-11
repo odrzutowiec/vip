@@ -15,6 +15,8 @@
 9. ✅ bug: the cursor is not updating
 10. ✅ bug: prompt is missing
 11. ✅ bug: search doesn't work
-12. bug: support for exiting :command mode with esc, ctrl-c and backspace
-13. feature: support for command history and cedit option
-14. feature: support for file completion and filec option
+12. ✅ bug: support for exiting :command mode with esc, ctrl-c and backspace
+13. feature: support for command history
+14. feature: support for cedit option
+15. feature: support for file completion and filec option
+16. ✅ feature: support for ^V
