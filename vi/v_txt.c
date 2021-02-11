@@ -113,6 +113,10 @@ v_tcmd_print(void)
 	/* Refresh the screen. */
 	if (vs_refresh(sp, 1))
 		return (1);
+
+	/* We are done with displaying. Remove fake character if we added it. */
+	if (rl_point == rl_end)
+		tp->len--;
 }
 
 /*
@@ -191,7 +195,9 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	}
 	
 	/* Do the input thing. */
-	char *input = readline((char []){prompt, 0});
+	readline((char []){prompt, 0});
+
+	// TODO: copy readline return to tp->lb instead of relaying on v_tcmd_print
 
 	/* Reenable the modeline updates. */
 	F_CLR(sp, SC_TINPUT);
