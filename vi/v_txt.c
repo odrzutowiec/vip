@@ -85,31 +85,32 @@ v_tcmd_print(void)
 	SCR *sp = v_tcmd_sp;
 	TEXT *tp = v_tcmd_tp;
 
-	/*
-	 * Convert narrow chars from readline bufffer into wide chars and store
-	 * them in the tp.
-	 */
-	if (sp->conv.input2int(
-		sp,
-		rl_line_buffer,
-		strlen(rl_line_buffer),
-		&sp->wp->cw,
-		&tp->len,
-		&tp->lb
-	))
-		return (1);
+	/* We recalculate lenght and offset each time. */
+	tp->len = tp->offset = 0;
+
+	// TODO: tp->lb buffer overflow
+
+	/* Copy readline prompt to our text buffer. */
+	if (rl_prompt)
+		for (; (tp->lb[tp->len] = rl_prompt[tp->len]);) 
+			tp->len++, tp->offset++;
+
+	/* Copy characters from readline to our text buffer. */
+	if (rl_line_buffer)
+		for (; (tp->lb[tp->len] = rl_line_buffer[tp->len - tp->offset]);)
+			tp->len++;
 
 	/* Cursor position in sp and tp is readline position. */
-	sp->cno = tp->cno = rl_point;
+	sp->cno = tp->cno = rl_point + tp->offset;
 
 	/* Move cursor beyond the end of the line if we were at the end. */
-	if (rl_point == rl_end) {
-		tp->lb[tp->cno++] = CH_CURSOR;
-		++tp->len;
-	}
+	if (rl_point == rl_end)
+		tp->lb[tp->len++] = CH_CURSOR, ++tp->cno;
 
+	/* Mark line for refresh. */
 	vs_change(sp, tp->lno, LINE_RESET);
 
+	/* Refresh the screen. */
 	if (vs_refresh(sp, 1))
 		return (1);
 }
@@ -160,6 +161,8 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	/* Reset readline settings */
 	// TODO: disable prep and deprep
 	rl_catch_signals = 0;
+	rl_set_prompt((char []){prompt, 0});
+	if (rl_line_buffer) rl_line_buffer[0] = 0;
 	
 	/*
 	 * Use custom function to render readline. Rendering works weird.
@@ -174,6 +177,9 @@ v_tcmd(SCR *sp, VICMD *vp, ARG_CHAR_T prompt, u_int flags)
 	
 	/* Save text pointer for the render function. */
 	v_tcmd_tp = tp;
+
+	/* Print the prompt. */
+	v_tcmd_print();
 
 	/* Get an event. */
 	if (v_event_get(sp, &ev, 0, LF_ISSET(TXT_MAPINPUT) ? EC_MAPINPUT : 0))
