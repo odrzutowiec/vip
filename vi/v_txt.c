@@ -84,11 +84,32 @@ v_tcmd_print(void)
 {
 	SCR *sp = v_tcmd_sp;
 	TEXT *tp = v_tcmd_tp;
-	
-	if (sp->conv.input2int(sp, rl_line_buffer, strlen(rl_line_buffer), &sp->wp->cw, &tp->len, &tp->lb))
+
+	/*
+	 * Convert narrow chars from readline bufffer into wide chars and store
+	 * them in the tp.
+	 */
+	if (sp->conv.input2int(
+		sp,
+		rl_line_buffer,
+		strlen(rl_line_buffer),
+		&sp->wp->cw,
+		&tp->len,
+		&tp->lb
+	))
 		return (1);
-	
+
+	/* Cursor position in sp and tp is readline position. */
+	sp->cno = tp->cno = rl_point;
+
+	/* Move cursor beyond the end of the line if we were at the end. */
+	if (rl_point == rl_end) {
+		tp->lb[tp->cno++] = CH_CURSOR;
+		++tp->len;
+	}
+
 	vs_change(sp, tp->lno, LINE_RESET);
+
 	if (vs_refresh(sp, 1))
 		return (1);
 }
